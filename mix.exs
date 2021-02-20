@@ -42,7 +42,9 @@ defmodule Tvirus.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:ex_machina, "~> 2.4", only: :test},
+      {:faker, "~> 0.16", only: :test}
     ]
   end
 
