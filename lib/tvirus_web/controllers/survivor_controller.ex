@@ -22,7 +22,7 @@ defmodule TvirusWeb.SurvivorController do
     longitude = args[:last_location][:longitude]
 
     args
-    |> Map.delete(args.last_location)
+    |> Map.delete(args[:last_location])
     |> Map.put(:latitude, str_to_float(latitude))
     |> Map.put(:longitude, str_to_float(longitude))
   end

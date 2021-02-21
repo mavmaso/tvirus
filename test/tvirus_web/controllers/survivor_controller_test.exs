@@ -2,13 +2,14 @@ defmodule TvirusWeb.SurvivorControllerTest do
   use TvirusWeb.ConnCase
 
   # import Tvirus.Factory
+  import Mock
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "sign_up" do
-    test "Add a survivor, returns :ok", %{conn: conn} do
+    test "with valid params, returns :ok", %{conn: conn} do
       params = %{
         survivor: %{
           name: Faker.Person.PtBr.name(),
@@ -48,6 +49,16 @@ defmodule TvirusWeb.SurvivorControllerTest do
       conn = post(conn, Routes.survivor_path(conn, :sign_up, params))
 
       assert %{"errors" => %{"latitude" =>  _, "longitude" =>  _}} = json_response(conn, 422)
+    end
+
+    test "with PostgreSQL error, returns :error", %{conn: conn} do
+      with_mock Tvirus.Repo, transaction: fn _func, _opt -> {:error, %{}} end do
+        params = %{survivor: %{name: Faker.Person.PtBr.name()}}
+
+        conn = post(conn, Routes.survivor_path(conn, :sign_up, params))
+
+        assert %{"errors" => %{"detail" => "transaction_error"}} = json_response(conn, 400)
+      end
     end
   end
 end

@@ -8,6 +8,13 @@ defmodule Tvirus.Player do
 
   alias Tvirus.Player.Survivor
 
+  defp check_transaction(transaction) do
+    case transaction do
+      {:ok, {_, _} = repo} -> repo
+      _ -> {:error, :transaction_error}
+    end
+  end
+
   @doc """
   Returns the list of survivors.
 
@@ -49,10 +56,13 @@ defmodule Tvirus.Player do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_survivor(attrs \\ %{}) do
-    %Survivor{}
-    |> Survivor.changeset(attrs)
-    |> Repo.insert()
+  def create_survivor(attrs) do
+    Repo.transaction(fn ->
+      %Survivor{}
+      |> Survivor.changeset(attrs)
+      |> Repo.insert()
+    end, timeout: :infinity)
+    |> check_transaction()
   end
 
   @doc """
@@ -68,9 +78,12 @@ defmodule Tvirus.Player do
 
   """
   def update_survivor(%Survivor{} = survivor, attrs) do
-    survivor
-    |> Survivor.changeset(attrs)
-    |> Repo.update()
+    Repo.transaction(fn ->
+      survivor
+      |> Survivor.changeset(attrs)
+      |> Repo.update()
+    end, timeout: :infinity)
+    |> check_transaction()
   end
 
   @doc """
@@ -86,7 +99,10 @@ defmodule Tvirus.Player do
 
   """
   def delete_survivor(%Survivor{} = survivor) do
-    Repo.delete(survivor)
+    Repo.transaction(fn ->
+      Repo.delete(survivor)
+    end, timeout: :infinity)
+    |> check_transaction()
   end
 
   @doc """
