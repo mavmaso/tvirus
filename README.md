@@ -22,10 +22,11 @@
 - Run complete tests `mix test`
 
 ## Database
- PostgreSQL
-
- username: postgres
- password: postgres
+  PostgreSQL
+  ```
+  username: postgres
+  password: postgres
+  ```
 
 ## Using
 
@@ -34,6 +35,7 @@
 ### Endpoint
 
  - Add survivors ( post /api/v1/sign_up )
+  ```
   {
     "name": "John One",
     "age": 23,
@@ -49,16 +51,20 @@
       AK47: 1
     }
   }
+  ```
 
  - Update survivor location ( put /api/v1/location/:id )
+  ```
   {
     "latitude": 37.421925,
     "longitude": -122.0841293
   }
+  ```
 
  - Flag survivor as infected ( put /api/v1/flag/:id )
 
  - Trade items ( post /api/v1/trade/ )
+  ```
   {
     survivor_id: 2
     inventory: {
@@ -75,6 +81,7 @@
       AK47: 6
     }
   }
+  ```
 
  - Reports - infected  ( get api/v1/infecteds )
 
