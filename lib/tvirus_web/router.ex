@@ -8,6 +8,6 @@ defmodule TvirusWeb.Router do
   scope "/api/v1", TvirusWeb do
     pipe_through :api
 
-    get "/sign_up", SurvivorController, :sign_up
+    post "/sign_up", SurvivorController, :sign_up
   end
 end
