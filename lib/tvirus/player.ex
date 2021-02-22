@@ -29,6 +29,16 @@ defmodule Tvirus.Player do
   end
 
   @doc """
+
+  """
+  def get_survivor(id) do
+    case Repo.get(Survivor, id) do
+      %Survivor{} = survivor -> {:ok, survivor}
+      nil -> {:error, :not_found}
+    end
+  end
+
+  @doc """
   Gets a single survivor.
 
   Raises `Ecto.NoResultsError` if the Survivor does not exist.

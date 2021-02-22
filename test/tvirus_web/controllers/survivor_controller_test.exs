@@ -79,5 +79,13 @@ defmodule TvirusWeb.SurvivorControllerTest do
       assert "#{subject["last_location"]["latitude"]}" == params.last_location.latitude
       assert "#{subject["last_location"]["longitude"]}" == params.last_location.longitude
     end
+
+    test "with invalid id, returns :error", %{conn: conn} do
+      params = %{last_location: %{}}
+
+      conn = put(conn, Routes.survivor_path(conn, :location, 1, params))
+
+      assert %{"detail" => "Not Found"} = json_response(conn, 404)["errors"]
+    end
   end
 end

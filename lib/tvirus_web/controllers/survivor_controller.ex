@@ -18,11 +18,11 @@ defmodule TvirusWeb.SurvivorController do
 
   def location(conn, %{"id" => id} = old_params) do
     with params <- clean_params(Map.delete(old_params, "id")),
-      %Survivor{} = survivor <- Player.get_survivor!(id),
-      {:ok, %Survivor{} = survivor} <- Player.update_survivor(survivor, params) do
+      {:ok, %Survivor{} = survivor} <- Player.get_survivor(id),
+      {:ok, %Survivor{} = neo_survivor} <- Player.update_survivor(survivor, params) do
         conn
         |> put_status(:ok)
-        |> render("show.json", %{survivor: survivor})
+        |> render("show.json", %{survivor: neo_survivor})
       end
   end
 
