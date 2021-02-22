@@ -10,6 +10,6 @@ defmodule TvirusWeb.Router do
 
     post "/sign_up", SurvivorController, :sign_up
     put "/location/:id", SurvivorController, :location
-    put "flag/:id", SurvivorController, :flag
+    put "/flag/:id", SurvivorController, :flag
   end
 end

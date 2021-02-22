@@ -30,7 +30,14 @@
 
 ## Using
 
- WIP
+ You can use postman, or similar app, to send json to this API.The endpoint and the item's list are below.
+
+  | Item              | Points    |
+  |-------------------|-----------|
+  | 1 Fiji Water      | 14 points |
+  | 1 Campbell Soup   | 12 points |
+  | 1 First Aid Pouch | 10 points |
+  | 1 AK47            |  8 points |
 
 ### Endpoint
 
