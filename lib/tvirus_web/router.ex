@@ -9,5 +9,6 @@ defmodule TvirusWeb.Router do
     pipe_through :api
 
     post "/sign_up", SurvivorController, :sign_up
+    put "/location/:id", SurvivorController, :location
   end
 end

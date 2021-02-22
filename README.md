@@ -41,8 +41,8 @@
     "age": 23,
     "gender": "M",
     "last_location": {
-      "latitude": 15.23456,
-      "longitude": -30.67890
+      "latitude": "15.23456",
+      "longitude": "-30.67890"
     }
     inventory: {
       fiji_water: 1,
@@ -56,8 +56,8 @@
  - Update survivor location ( put /api/v1/location/:id )
   ```
   {
-    "latitude": 37.421925,
-    "longitude": -122.0841293
+    "latitude": "37.421925",
+    "longitude": "-122.0841293"
   }
   ```
 

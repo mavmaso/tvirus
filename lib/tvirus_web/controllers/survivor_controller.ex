@@ -16,6 +16,16 @@ defmodule TvirusWeb.SurvivorController do
     end
   end
 
+  def location(conn, %{"id" => id} = old_params) do
+    with params <- clean_params(Map.delete(old_params, "id")),
+      %Survivor{} = survivor <- Player.get_survivor!(id),
+      {:ok, %Survivor{} = survivor} <- Player.update_survivor(survivor, params) do
+        conn
+        |> put_status(:ok)
+        |> render("show.json", %{survivor: survivor})
+      end
+  end
+
   defp clean_params(params) do
     args = Utils.atomify_map(params)
     latitude = args[:last_location][:latitude]
