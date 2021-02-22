@@ -26,6 +26,15 @@ defmodule TvirusWeb.SurvivorController do
       end
   end
 
+  def flag(conn, %{"id" => id}) do
+    with {:ok, %Survivor{} = survivor} <- Player.get_survivor(id),
+    {:ok, %Survivor{} = neo_survivor} <- Player.update_survivor(survivor, %{infected: true}) do
+      conn
+      |> put_status(:ok)
+      |> render("show.json", %{survivor: neo_survivor})
+    end
+  end
+
   defp clean_params(params) do
     args = Utils.atomify_map(params)
     latitude = args[:last_location][:latitude]

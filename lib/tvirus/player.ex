@@ -29,7 +29,10 @@ defmodule Tvirus.Player do
   end
 
   @doc """
+  Gets a single survivor.
 
+  Returns `{:error, not_found}` if the Survivor does not exist.
+  Or returns `{:ok, %Survivor{}}`.
   """
   def get_survivor(id) do
     case Repo.get(Survivor, id) do

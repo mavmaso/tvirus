@@ -88,4 +88,16 @@ defmodule TvirusWeb.SurvivorControllerTest do
       assert %{"detail" => "Not Found"} = json_response(conn, 404)["errors"]
     end
   end
+
+  describe "flag/2" do
+    test "with valid params, returns :ok", %{conn: conn} do
+      survivor = insert(:survivor)
+
+      conn = put(conn, Routes.survivor_path(conn, :flag, survivor.id))
+
+      assert subject = json_response(conn, 200)["data"]
+      assert subject["id"] == survivor.id
+      assert subject["infected"] == true
+    end
+  end
 end
