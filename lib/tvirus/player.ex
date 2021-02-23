@@ -117,17 +117,4 @@ defmodule Tvirus.Player do
     end, timeout: :infinity)
     |> check_transaction()
   end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking survivor changes.
-
-  ## Examples
-
-      iex> change_survivor(survivor)
-      %Ecto.Changeset{data: %Survivor{}}
-
-  """
-  def change_survivor(%Survivor{} = survivor, attrs \\ %{}) do
-    Survivor.changeset(survivor, attrs)
-  end
 end
