@@ -20,7 +20,7 @@ defmodule TvirusWeb.SurvivorController do
     with params <- clean_params(Map.delete(old_params, "id")),
       {:ok, %Survivor{} = survivor} <- Player.get_survivor(id),
       {:ok, %Survivor{} = neo_survivor} <- Player.update_survivor(survivor, params) do
-        conn
+        conn #TODO
         |> put_status(:ok)
         |> render("show.json", %{survivor: neo_survivor})
       end
@@ -29,7 +29,7 @@ defmodule TvirusWeb.SurvivorController do
   def flag(conn, %{"id" => id}) do
     with {:ok, %Survivor{} = survivor} <- Player.get_survivor(id),
     {:ok, %Survivor{} = neo_survivor} <- Player.update_survivor(survivor, %{infected: true}) do
-      conn
+      conn #TODO (5 reports)
       |> put_status(:ok)
       |> render("show.json", %{survivor: neo_survivor})
     end

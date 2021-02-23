@@ -24,6 +24,14 @@ defmodule Tvirus.Resource do
   @doc """
   Gets a single item.
 
+  Returns `{:error, not_found}` if the Item does not exist.
+  Or returns `{:ok, %Item{}}`.
+  """
+  def get_item_by_name(name), do: Item |> where([i], i.name == ^name) |> Repo.one()
+
+  @doc """
+  Gets a single item.
+
   Raises `Ecto.NoResultsError` if the Item does not exist.
 
   ## Examples

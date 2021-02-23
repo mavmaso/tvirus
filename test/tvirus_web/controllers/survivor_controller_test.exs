@@ -5,6 +5,11 @@ defmodule TvirusWeb.SurvivorControllerTest do
   import Mock
 
   setup %{conn: conn} do
+    insert(:item, %{name: "Fiji Water", points: 14})
+    insert(:item, %{name: "Campbell Soup", points: 12})
+    insert(:item, %{name: "First Aid Pouch", points: 10})
+    insert(:item, %{name: "AK47", points: 8})
+
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
@@ -18,7 +23,16 @@ defmodule TvirusWeb.SurvivorControllerTest do
           last_location: %{
             latitude: "15.12",
             longitude: "-30.34"
-          }
+          },
+          inventory: [
+            "Fiji Water",
+            "Campbell Soup",
+            "Campbell Soup",
+            "First Aid Pouch",
+            "AK47",
+            "First Aid Pouch",
+            "Campbell Soup"
+          ]
         }
       }
 
@@ -32,6 +46,10 @@ defmodule TvirusWeb.SurvivorControllerTest do
       assert "#{subject["last_location"]["latitude"]}" == params.survivor.last_location.latitude
       assert "#{subject["last_location"]["longitude"]}" == params.survivor.last_location.longitude
       assert subject["infected"] == false
+      assert subject["inventory"]["fiji_water"] == 1
+      assert subject["inventory"]["campbell_soup"] == 3
+      assert subject["inventory"]["first_aid_pouch"] == 2
+      assert subject["inventory"]["ak47"] == 1
     end
 
     test "with invalid params, returns :error", %{conn: conn} do

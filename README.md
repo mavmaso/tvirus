@@ -51,12 +51,15 @@
       "latitude": "15.23456",
       "longitude": "-30.67890"
     }
-    inventory: {
-      fiji_water: 1,
-      campbell_soup: 2,
-      first_aid_pouch: 0,
-      AK47: 1
-    }
+    inventory: [
+      "Fiji Water",
+      "Campbell Soup",
+      "Campbell Soup",
+      "First Aid Pouch",
+      "AK47",
+      "First Aid Pouch",
+      "Campbell Soup"
+    ]
   }
   ```
 
