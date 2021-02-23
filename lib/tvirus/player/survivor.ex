@@ -28,6 +28,10 @@ defmodule Tvirus.Player.Survivor do
     |> cast(attrs, @required ++ @optional)
     |> validate_required(@required)
     |> prepare_inventory(attrs)
+    |> validate_length(:name, min: 3)
+    |> validate_number(:age, greater_than: 0)
+    |> validate_inclusion(:gender, ["M", "F"])
+    |> unique_constraint(:name)
   end
 
   defp prepare_inventory(changeset, %{inventory: inventory}) when inventory == [], do: changeset

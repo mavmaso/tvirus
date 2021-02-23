@@ -36,12 +36,20 @@ defmodule Tvirus.PlayerTest do
     end
 
     test "create_survivor/1 with invalid data returns error changeset" do
+      survivor = insert(:survivor)
+
       params = %{
-        name: "",
-        age: nil
+        name: "oi",
+        age: 0,
+        gender: "male"
       }
 
-      assert {:error, %Ecto.Changeset{}} = Player.create_survivor(params)
+      assert {:error, %Ecto.Changeset{} = changeset} = Player.create_survivor(params)
+      assert {"should be at least %{count} character(s)", _} = changeset.errors[:name]
+      assert {"must be greater than %{number}", _} = changeset.errors[:age]
+      assert {"is invalid", _} = changeset.errors[:gender]
+      assert changeset.errors[:latitude]
+      assert changeset.errors[:longitude]
     end
 
     test "update_survivor/2 with valid data updates the survivor" do
