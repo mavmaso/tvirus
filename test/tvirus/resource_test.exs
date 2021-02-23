@@ -33,7 +33,7 @@ defmodule Tvirus.ResourceTest do
 
     test "create_item/1 with invalid data returns error changeset" do
       item = insert(:item)
-      params = %{name: ""}
+      params = %{name: item.name}
 
       assert {:error, %Ecto.Changeset{}} = Resource.create_item(params)
     end
