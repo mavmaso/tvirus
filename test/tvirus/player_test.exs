@@ -36,8 +36,6 @@ defmodule Tvirus.PlayerTest do
     end
 
     test "create_survivor/1 with invalid data returns error changeset" do
-      survivor = insert(:survivor)
-
       params = %{
         name: "oi",
         age: 0,
