@@ -2,6 +2,7 @@
  
   It's a RESTfull API for play a game, "The Resident Zombie', as a solution for proposal problem abouve.
   Same of this solution may seens over-engineered, but was to show my skill as a back-end dev.
+  The ideia here was to have the best clean code possivel with TDD, scalability and maintecible in mind.
 
 ### Proposal Problem
 
@@ -79,6 +80,8 @@
   }
   ```
 
+ - Reports ( get api/v1/reports )
+
  - Trade items ( post /api/v1/trade/ )
   ```
   {
@@ -99,13 +102,7 @@
   }
   ```
 
- - Reports - infected  ( get api/v1/infecteds )
 
- - Reports - non-infected ( get api/v1/healths )
-
- - Reports - average amount items by survivors ( get api/v1/items_by_survivors )
-
- - Reports - points lost because of an infected survivor ( get api/v1/lost_points )
 
 
 ## Made by

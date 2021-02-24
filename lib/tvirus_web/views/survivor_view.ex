@@ -2,16 +2,16 @@ defmodule TvirusWeb.SurvivorView do
   use TvirusWeb, :view
   alias TvirusWeb.SurvivorView
 
-  def render("index.json", %{survivors: survivors}) do
-    %{data: render_many(survivors, SurvivorView, "survivor.json")}
-  end
+  # def render("index.json", %{survivors: survivors}) do
+  #   %{data: render_many(survivors, SurvivorView, "survivor.json")}
+  # end
 
   def render("show.json", %{survivor: survivor}) do
     %{data: render_one(survivor, SurvivorView, "survivor.json")}
   end
 
   def render("survivor.json", %{survivor: survivor}) do
-    inventory = prepare_inventory(survivor)
+    inventory = build_inventory(survivor)
 
     %{
       id: survivor.id,
@@ -27,7 +27,11 @@ defmodule TvirusWeb.SurvivorView do
     }
   end
 
-  defp prepare_inventory(survivor) do
+  def render("report.json", %{report: report}) do
+    %{data: report}
+  end
+
+  defp build_inventory(survivor) do
     neo_survivor = Tvirus.Repo.preload(survivor, [:inventory])
 
     %{
@@ -38,7 +42,7 @@ defmodule TvirusWeb.SurvivorView do
     }
   end
 
-  def count_items(inventory, item_name) do
+  defp count_items(inventory, item_name) do
     Enum.reduce(inventory, 0, fn item, acc -> if item.name == item_name, do: acc + 1, else: acc end)
   end
 end

@@ -4,6 +4,8 @@ defmodule TvirusWeb.SurvivorControllerTest do
   import Tvirus.Factory
   import Mock
 
+  alias Tvirus.Resource
+
   setup %{conn: conn} do
     insert(:item, %{name: "Fiji Water", points: 14})
     insert(:item, %{name: "Campbell Soup", points: 12})
@@ -136,6 +138,38 @@ defmodule TvirusWeb.SurvivorControllerTest do
 
       assert :dets.delete(table, key)
       assert :dets.close(table)
+    end
+  end
+
+  describe "reports/2" do
+    test "percentage of infected survivors, returns :ok", %{conn: conn} do
+      insert(:survivor,%{inventory: [
+        Resource.get_item_by_name("Fiji Water"),
+        Resource.get_item_by_name("First Aid Pouch")
+      ]})
+      insert(:survivor,%{inventory: [
+        Resource.get_item_by_name("Campbell Soup"),
+        Resource.get_item_by_name("AK47"),
+        Resource.get_item_by_name("First Aid Pouch")
+      ]})
+      insert(:survivor,%{inventory: [Resource.get_item_by_name("Campbell Soup")]})
+      insert(:survivor, %{infected: true, inventory: [Resource.get_item_by_name("AK47")]})
+      insert(:survivor, %{infected: true, inventory: [Resource.get_item_by_name("AK47")]})
+
+      items_map = %{
+        "fiji_water" => "1/5",
+        "campbell_soup" => "2/5",
+        "first_aid_pouch" => "2/5",
+        "ak47" => "3/5"
+      }
+
+      conn = get(conn, Routes.survivor_path(conn, :reports))
+
+      assert subject = json_response(conn, 200)["data"]
+      assert subject["infected"] == "40.0%"
+      assert subject["non_infected"] == "60.0%"
+      assert subject["items_per_survivors"] == items_map
+      assert subject["lost_points"] == 16
     end
   end
 end

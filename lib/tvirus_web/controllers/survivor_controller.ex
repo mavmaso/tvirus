@@ -38,6 +38,12 @@ defmodule TvirusWeb.SurvivorController do
     end
   end
 
+  def reports(conn, _params) do
+    conn
+    |> put_status(:ok)
+    |> render("report.json", %{report: Player.reports})
+  end
+
   defp clean_params(params) do
     args = Utils.atomify_map(params)
     latitude = args[:last_location][:latitude]

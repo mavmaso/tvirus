@@ -6,7 +6,18 @@ defmodule Tvirus.Resource do
   import Ecto.Query, warn: false
   alias Tvirus.Repo
 
-  alias Tvirus.Resource.Item
+  alias Tvirus.Resource.{Item, Inventory}
+
+  @doc """
+  Count the total of one kind of item.
+  """
+  def total_items_by_kind(kind) do
+    Inventory
+    |> join(:inner, [i], item in assoc(i, :item))
+    |> where([_i, item], item.name == ^kind)
+    |> Repo.all()
+    |> length()
+  end
 
   @doc """
   Returns the list of items.

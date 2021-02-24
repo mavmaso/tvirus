@@ -4,10 +4,10 @@ defmodule Tvirus.Player do
   """
 
   import Ecto.Query, warn: false
-  alias Tvirus.Repo
-  alias Tvirus.DETS
+  alias Tvirus.{Repo, DETS, Resource}
 
   alias Tvirus.Player.Survivor
+  alias Tvirus.Resource.Inventory
 
   defp check_transaction(transaction) do
     case transaction do
@@ -17,7 +17,8 @@ defmodule Tvirus.Player do
   end
 
   @doc """
-
+  Check how many flag the Survivor already have and flag him/her if the flager didn't do yet.
+  And if the survivor already have 5 stacks then mark him/her as infected.
   """
   def flag_survivor(%Survivor{} = survivor, flager_id) do
     length = DETS.list_flager(survivor.id, flager_id) |> length
@@ -28,6 +29,53 @@ defmodule Tvirus.Player do
       length < 5 ->
         {:ok, survivor}
     end
+  end
+
+  @doc """
+  WIP
+  """
+  def reports do
+    total_survivor = list_survivors() |> length()
+    total_fiji_water = Resource.total_items_by_kind("Fiji Water")
+    total_campbell_soup = Resource.total_items_by_kind("Campbell Soup")
+    total_first_aid_pouch = Resource.total_items_by_kind("First Aid Pouch")
+    total_ak47 = Resource.total_items_by_kind("AK47")
+
+    %{
+      infected: "#{((count_infected()/total_survivor) |> Float.round(2)) * 100}%",
+      non_infected: "#{((count_non_infected()/total_survivor) |> Float.round(2)) * 100}%",
+      items_per_survivors: %{
+        fiji_water: "#{total_fiji_water}/#{total_survivor}",
+        campbell_soup: "#{total_campbell_soup}/#{total_survivor}",
+        first_aid_pouch: "#{total_first_aid_pouch}/#{total_survivor}",
+        ak47: "#{total_ak47}/#{total_survivor}"
+      },
+      lost_points: lost_points()
+    }
+  end
+
+  defp count_infected do
+    Survivor
+    |> where([s], s.infected == true)
+    |> Repo.all()
+    |> length()
+  end
+
+  defp count_non_infected do
+    Survivor
+    |> where([s], s.infected == false)
+    |> Repo.all()
+    |> length()
+  end
+
+  defp lost_points do
+    Inventory
+    |> join(:inner, [inven], item in assoc(inven, :item))
+    |> join(:inner, [inven], survivor in assoc(inven, :survivor))
+    |> where([_inven, _item, survivor], survivor.infected == true)
+    |> select([_inven, item, _survivor], item.points)
+    |> Repo.all
+    |> Enum.reduce(fn item, acc -> item + acc end)
   end
 
   @doc """
