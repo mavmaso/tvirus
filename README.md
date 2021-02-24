@@ -1,8 +1,9 @@
 # Tvirus
  
-  It's a RESTfull API for play a game, "The Resident Zombie', as a solution for proposal problem:
+  It's a RESTfull API for play a game, "The Resident Zombie', as a solution for proposal problem abouve.
+  Same of this solution may seens over-engineered, but was to show my skill as a back-end dev.
 
-### Problem Description
+### Proposal Problem
 
   The world, as we know it, has fallen into an apocalyptic scenario. The "Influenzer T-Virus" (a.k.a. Twiter Virus) is transforming human beings into stupid beasts (a.k.a. Zombies), hungry to cancel humans and eat their limbs.
 

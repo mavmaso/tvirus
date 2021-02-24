@@ -28,10 +28,11 @@ defmodule TvirusWeb.SurvivorController do
       end
   end
 
-  def flag(conn, %{"id" => id}) do
+  def flag(conn, %{"id" => id, "flager_id" => flager_id}) do
     with {:ok, %Survivor{} = survivor} <- Player.get_survivor(id),
-    {:ok, %Survivor{} = neo_survivor} <- Player.update_survivor(survivor, %{infected: true}) do
-      conn #TODO (5 reports)
+      {:ok, %Survivor{}} <- Player.get_survivor(flager_id),
+      {:ok, neo_survivor} <- Player.flag_survivor(survivor, flager_id) do
+      conn
       |> put_status(:ok)
       |> render("show.json", %{survivor: neo_survivor})
     end

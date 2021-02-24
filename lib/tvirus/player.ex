@@ -5,6 +5,7 @@ defmodule Tvirus.Player do
 
   import Ecto.Query, warn: false
   alias Tvirus.Repo
+  alias Tvirus.DETS
 
   alias Tvirus.Player.Survivor
 
@@ -12,6 +13,20 @@ defmodule Tvirus.Player do
     case transaction do
       {:ok, {_, _} = repo} -> repo
       _ -> {:error, :transaction_error}
+    end
+  end
+
+  @doc """
+
+  """
+  def flag_survivor(%Survivor{} = survivor, flager_id) do
+    length = DETS.list_flager(survivor.id, flager_id) |> length
+
+    cond do
+      length >= 5 ->
+        update_survivor(survivor, %{infected: true})
+      length < 5 ->
+        {:ok, survivor}
     end
   end
 

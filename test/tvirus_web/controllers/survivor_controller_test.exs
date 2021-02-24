@@ -108,14 +108,34 @@ defmodule TvirusWeb.SurvivorControllerTest do
   end
 
   describe "flag/2" do
-    test "with valid params, returns :ok", %{conn: conn} do
+    test "with valid params but not flag 5 time yet, returns :ok", %{conn: conn} do
+      survivor = insert(:survivor)
+      params = %{flager_id: insert(:survivor).id}
+
+      conn = put(conn, Routes.survivor_path(conn, :flag, survivor.id, params))
+
+      assert subject = json_response(conn, 200)["data"]
+      assert subject["id"] == survivor.id
+      assert subject["infected"] == false
+    end
+
+    test "with valid params and already flag 4, returns :ok", %{conn: conn} do
       survivor = insert(:survivor)
 
-      conn = put(conn, Routes.survivor_path(conn, :flag, survivor.id))
+      key = String.to_atom("#{survivor.id}")
+      assert {:ok, table} = :dets.open_file(:flag, [type: :set])
+      assert :dets.insert(table, {key, ["ola","oi","yo","hi"]})
+
+      params = %{flager_id: insert(:survivor).id}
+
+      conn = put(conn, Routes.survivor_path(conn, :flag, survivor.id, params))
 
       assert subject = json_response(conn, 200)["data"]
       assert subject["id"] == survivor.id
       assert subject["infected"] == true
+
+      assert :dets.delete(table, key)
+      assert :dets.close(table)
     end
   end
 end
