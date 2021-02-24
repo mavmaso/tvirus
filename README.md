@@ -73,6 +73,11 @@
   ```
 
  - Flag survivor as infected ( put /api/v1/flag/:id )
+  ```
+  {
+    "flager_id": 1
+  }
+  ```
 
  - Trade items ( post /api/v1/trade/ )
   ```
