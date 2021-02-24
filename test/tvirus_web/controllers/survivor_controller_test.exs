@@ -172,4 +172,55 @@ defmodule TvirusWeb.SurvivorControllerTest do
       assert subject["lost_points"] == 16
     end
   end
+
+  describe "trade_items" do
+    @tag :skip
+    test "two survivors trade items with each other in a fair trade, returns :ok", %{conn: conn} do
+      # inventary_one = Enum.map(1..5, fn -> Resource.get_item_by_name("Fiji Water") end) |> IO.inspect
+      survivor = insert(:survivor, inventory: [
+        Resource.get_item_by_name("Fiji Water"),
+        Resource.get_item_by_name("First Aid Pouch")
+      ])
+      # inventary_two =
+      survivor_two = insert(:survivor, inventory: [
+        Resource.get_item_by_name("Campbell Soup"),
+        Resource.get_item_by_name("AK47"),
+      ])
+
+      params =  %{
+        survivor_id_one: 1,
+        inventory: %{
+          fiji_water: 5,
+          campbell_soup: 0,
+          first_aid_pouch: 5,
+          AK47: 0
+        },
+        survivor_id_two: 2,
+        inventory: %{
+          fiji_water: 0,
+          campbell_soup: 6,
+          first_aid_pouch: 0,
+          AK47: 6
+        }
+      }
+
+      conn = post(conn, Routes.survivor_path(conn, :trade_items, params))
+
+      assert subject = json_response(conn, 201)["data"]
+    end
+
+    # test "one of the survivors is infected, returns :error", %{conn: conn} do
+    #   survivor = insert(:survivor,%{inventory: [Resource.get_item_by_name("Campbell Soup")]})
+    #   s_two = insert(:survivor, %{infected: true, inventory: [Resource.get_item_by_name("AK47")]})
+    # end
+
+    # test "unfair trade, returns :error", %{conn: conn} do
+    #   survivor = insert(:survivor,%{inventory: [Resource.get_item_by_name("Campbell Soup")]})
+    #   s_two = insert(:survivor, %{infected: true, inventory: [Resource.get_item_by_name("AK47")]})
+    # end
+
+    # test "can't find one of the survivors", %{conn: conn} do
+
+    # end
+  end
 end

@@ -85,25 +85,22 @@
  - Trade items ( post /api/v1/trade/ )
   ```
   {
-    survivor_id: 2
-    inventory: {
-      fiji_water: 5,
-      campbell_soup: 0,
-      first_aid_pouch: 5,
-      AK47: 0
+    "survivor_id_one": 1,
+    "inventory": {
+      "fiji_water": 5,
+      "campbell_soup": 0,
+      "first_aid_pouch": 5,
+      "AK47": 0
     },
-    survivor_id: 3
-    inventory: {
-      fiji_water: 0,
-      campbell_soup: 6,
-      first_aid_pouch: 0,
-      AK47: 6
+    "survivor_id_two": 2,
+    "inventory": {
+      "fiji_water": 0,
+      "campbell_soup": 6,
+      "first_aid_pouch": 0,
+      "AK47": 6
     }
   }
   ```
-
-
-
 
 ## Made by
 
