@@ -184,6 +184,10 @@ defmodule TvirusWeb.SurvivorControllerTest do
         survivor_id: survivor.id,
         item_id: Resource.get_item_by_name("First Aid Pouch").id
       })
+      insert(:inventory, %{
+        survivor_id: survivor.id,
+        item_id: Resource.get_item_by_name("Campbell Soup").id
+      })
 
       survivor_two = insert(:survivor)
       insert_list(6, :inventory, %{
@@ -193,6 +197,10 @@ defmodule TvirusWeb.SurvivorControllerTest do
       insert_list(6, :inventory, %{
         survivor_id: survivor_two.id,
         item_id: Resource.get_item_by_name("AK47").id
+      })
+      insert(:inventory, %{
+        survivor_id: survivor_two.id,
+        item_id: Resource.get_item_by_name("Fiji Water").id
       })
 
       params = %{
@@ -215,7 +223,14 @@ defmodule TvirusWeb.SurvivorControllerTest do
       conn = post(conn, Routes.survivor_path(conn, :trade_items, params))
 
       assert subject = json_response(conn, 200)["data"]
-      assert subject == "trade successfully completed"
+
+      assert x_survivor_one = Enum.find(subject, &(&1["id"] == survivor.id))
+      assert x_survivor_one["inventory"]["campbell_soup"] == params.trade_two.campbell_soup + 1
+      assert x_survivor_one["inventory"]["fiji_water"] == 0
+
+      assert x_survivor_two = Enum.find(subject, &(&1["id"] == survivor_two.id))
+      assert x_survivor_two["inventory"]["fiji_water"] == params.trade_one.fiji_water + 1
+      assert x_survivor_two["inventory"]["campbell_soup"] == 0
     end
 
     # test "one of the survivors is infected, returns :error", %{conn: conn} do

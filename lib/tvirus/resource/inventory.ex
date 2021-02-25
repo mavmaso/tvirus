@@ -1,10 +1,17 @@
 defmodule Tvirus.Resource.Inventory do
   use Ecto.Schema
-  # import Ecto.Changeset
+  import Ecto.Changeset
 
-  @primary_key false
   schema "inventory" do
     belongs_to(:survivor, Tvirus.Player.Survivor)
     belongs_to(:item, Tvirus.Resource.Item)
+  end
+
+  @required ~w(survivor_id)a
+  @doc false
+  def changeset(inventory, attrs) do
+    inventory
+    |> cast(attrs, @required)
+    |> validate_required(@required)
   end
 end

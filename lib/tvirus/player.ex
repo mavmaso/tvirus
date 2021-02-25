@@ -8,6 +8,7 @@ defmodule Tvirus.Player do
 
   alias Tvirus.Player.Survivor
   alias Tvirus.Resource.Inventory
+  alias Tvirus.{Utils, Resource}
 
   defp check_transaction(transaction) do
     case transaction do
@@ -110,24 +111,26 @@ defmodule Tvirus.Player do
   end
 
   defp points_per_survivor(%Survivor{} = survivor, trade_map) do
-    inventory = build_inventory(survivor)
+    inventory_map = build_inventory(survivor)
     real? =
-      Enum.map(inventory, fn {k, v} ->
+      Enum.map(inventory_map, fn {k, v} ->
         trade_map[k] |> String.to_integer <= v
       end) |> Enum.find(&(&1 == false)) |> is_nil()
 
     case real? do
       true ->
-        sum_points(survivor)
+        sum_points(trade_map)
       _ ->
         false
     end
   end
 
-  defp sum_points(%Survivor{} = survivor) do
-    neo_survivor = Repo.preload(survivor, [:inventory])
-
-    Enum.reduce(neo_survivor.inventory, 0, fn item, acc -> item.points + acc end)
+  defp sum_points(inventory_map) do
+    Enum.reduce(inventory_map, 0, fn {k,v}, acc->
+      {key, value} = Utils.build_trade_key_value(k, v)
+      item = Resource.get_item_by_name(key)
+      (item.points * value) + acc
+    end)
   end
 
   @doc """

@@ -20,9 +20,10 @@ defmodule Tvirus.Resource do
   end
 
 
-  def transfer_items(number, item_name, survivor_id, new_survivor_id) when number |> is_integer do
-    item_id = get_item_by_name(item_name)
-    # {:ok, _} = update_inventory(survivor_id, new_survivor_id, item_id)
+  def transfer_items(number, item_name, survivor_id, new_survivor_id) when number > 0 do
+    {:ok, {:ok, _}} =
+      get_inventory_item!(item_name, survivor_id)
+      |> update_inventory_item(%{survivor_id: new_survivor_id})
 
     acc = number - 1
     transfer_items(acc, item_name, survivor_id, new_survivor_id)
@@ -117,5 +118,30 @@ defmodule Tvirus.Resource do
   """
   def delete_item(%Item{} = item) do
     Repo.delete(item)
+  end
+
+  @doc """
+  Get a single item in someone's inventory.
+  Returns `%Inventory{}` or `[]`
+  """
+  def get_inventory_item!(item_name, survivor_id) do
+    Inventory
+    |> join(:inner, [i], item in assoc(i, :item))
+    |> where([_i, item], item.name == ^item_name)
+    |> where([i, _item], i.survivor_id == ^survivor_id)
+    |> Repo.all()
+    |> hd
+  end
+
+  @doc """
+  Updates a item in someone's inventory.
+  Returns `{:ok, %Inventory{}}` or if not `{:error, %Ecto.Changeset{}}`
+  """
+  def update_inventory_item(%Inventory{} = inventory, attrs) do
+    Repo.transaction(fn ->
+      inventory
+      |> Inventory.changeset(attrs)
+      |> Repo.update()
+    end)
   end
 end

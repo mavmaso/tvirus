@@ -1,9 +1,8 @@
 defmodule TvirusWeb.SurvivorController do
   use TvirusWeb, :controller
 
-  alias Tvirus.Player
+  alias Tvirus.{Player, Resource, Utils}
   alias Tvirus.Player.Survivor
-  alias Tvirus.Utils
 
   action_fallback TvirusWeb.FallbackController
 
@@ -48,14 +47,22 @@ defmodule TvirusWeb.SurvivorController do
     with {:ok, %Survivor{} = survivor_one} <- Player.get_non_infected(s1_id),
       {:ok, %Survivor{} = survivor_two} <- Player.get_non_infected(s2_id),
       {:ok, args} <- clean_trade(params),
-      {:ok, :fair} <- Player.check_inventory(survivor_one, survivor_two,args) do
+      {:ok, :fair} <- Player.check_inventory(survivor_one, survivor_two, args) do
 
-      [survivor_one |> Tvirus.Repo.preload([:inventory]), survivor_two, params]
+      Enum.each(args.trade_one, fn {k,v} ->
+        {key, value} = Utils.build_trade_key_value(k, v)
+        Resource.transfer_items(value, key, survivor_one.id, survivor_two.id)
+      end)
 
+      Enum.each(args.trade_two, fn {k,v} ->
+        {key, value} = Utils.build_trade_key_value(k, v)
+        Resource.transfer_items(value, key, survivor_two.id, survivor_one.id)
+      end)
+
+      survivors = [Player.get_survivor!(survivor_one.id), Player.get_survivor!(survivor_two.id)]
       conn
       |> put_status(:ok)
-      |> json(%{data: "WIP"})
-      # |> render("index.json", %{survivors: survivors})
+      |> render("index.json", %{survivors: survivors})
     end
   end
 

@@ -5,4 +5,16 @@ defmodule Tvirus.Utils do
   end
 
   def atomify_map(not_a_map), do: not_a_map
+
+  def build_trade_key_value(k, v) do
+    value = String.to_integer(v)
+    map = %{
+      ak47: "AK47",
+      campbell_soup: "Campbell Soup",
+      fiji_water: "Fiji Water",
+      first_aid_pouch: "First Aid Pouch"
+    }
+
+    {map[k], value}
+  end
 end
