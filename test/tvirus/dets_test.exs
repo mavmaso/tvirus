@@ -46,5 +46,14 @@ defmodule Tvirus.DETSTest do
       assert subject == [flager.id]
       assert clear_DETS(survivor.id)
     end
+
+    test "cant't flag himself/herself, returns :ok" do
+      survivor = insert(:survivor)
+
+      assert subject = DETS.list_flager(survivor.id, survivor.id)
+
+      assert subject == []
+      assert clear_DETS(survivor.id)
+    end
   end
 end

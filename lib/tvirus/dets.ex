@@ -5,8 +5,9 @@ defmodule Tvirus.DETS do
 
   @doc """
   Returns and flags, if already not, the list of Survivors' id that flaged a Survivor.
+  Both id need to different if not returns `[]`
   """
-  def list_flager(survivor_id, flager_id) do
+  def list_flager(survivor_id, flager_id) when survivor_id != flager_id do
     key = String.to_atom("#{survivor_id}")
     {:ok, table} = :dets.open_file(:flag, [type: :set])
 
@@ -24,4 +25,6 @@ defmodule Tvirus.DETS do
     :dets.close(:flag)
     response
   end
+
+  def list_flager(survivor_id, flager_id) when survivor_id == flager_id, do: []
 end
