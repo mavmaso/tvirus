@@ -174,28 +174,36 @@ defmodule TvirusWeb.SurvivorControllerTest do
   end
 
   describe "trade_items" do
-    @tag :skip
     test "two survivors trade items with each other in a fair trade, returns :ok", %{conn: conn} do
-      # inventary_one = Enum.map(1..5, fn -> Resource.get_item_by_name("Fiji Water") end) |> IO.inspect
-      survivor = insert(:survivor, inventory: [
-        Resource.get_item_by_name("Fiji Water"),
-        Resource.get_item_by_name("First Aid Pouch")
-      ])
-      # inventary_two =
-      survivor_two = insert(:survivor, inventory: [
-        Resource.get_item_by_name("Campbell Soup"),
-        Resource.get_item_by_name("AK47"),
-      ])
+      survivor = insert(:survivor)
+      insert_list(5, :inventory, %{
+        survivor_id: survivor.id,
+        item_id: Resource.get_item_by_name("Fiji Water").id
+      })
+      insert_list(5, :inventory, %{
+        survivor_id: survivor.id,
+        item_id: Resource.get_item_by_name("First Aid Pouch").id
+      })
 
-      params =  %{
-        survivor_id_one: 1,
+      survivor_two = insert(:survivor)
+      insert_list(6, :inventory, %{
+        survivor_id: survivor_two.id,
+        item_id: Resource.get_item_by_name("Campbell Soup").id
+      })
+      insert_list(6, :inventory, %{
+        survivor_id: survivor_two.id,
+        item_id: Resource.get_item_by_name("AK47").id
+      })
+
+      params = %{
+        survivor_id_one: survivor.id,
         inventory: %{
           fiji_water: 5,
           campbell_soup: 0,
           first_aid_pouch: 5,
           AK47: 0
         },
-        survivor_id_two: 2,
+        survivor_id_two: survivor_two.id,
         inventory: %{
           fiji_water: 0,
           campbell_soup: 6,
@@ -206,7 +214,8 @@ defmodule TvirusWeb.SurvivorControllerTest do
 
       conn = post(conn, Routes.survivor_path(conn, :trade_items, params))
 
-      assert subject = json_response(conn, 201)["data"]
+      assert subject = json_response(conn, 200)["data"]
+      assert subject == "trade successfully completed"
     end
 
     # test "one of the survivors is infected, returns :error", %{conn: conn} do

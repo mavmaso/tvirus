@@ -44,6 +44,18 @@ defmodule TvirusWeb.SurvivorController do
     |> render("report.json", %{report: Player.reports})
   end
 
+  def trade_items(conn, %{"survivor_id_one" => s1_id, "survivor_id_two" => s2_id} = params) do
+    with {:ok, %Survivor{} = survivor_one} <- Player.get_survivor(s1_id),
+      {:ok, %Survivor{} = survivor_two} <- Player.get_survivor(s2_id) do
+
+      [survivor_one |> Tvirus.Repo.preload([:inventory]), survivor_two, params]
+
+      conn
+      |> put_status(:ok)
+      |> json(%{data: "WIP"})
+    end
+  end
+
   defp clean_params(params) do
     args = Utils.atomify_map(params)
     latitude = args[:last_location][:latitude]

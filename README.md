@@ -1,8 +1,6 @@
 # Tvirus
  
-  It's a RESTfull API for play a game, "The Resident Zombie', as a solution for proposal problem abouve.
-  Same of this solution may seens over-engineered, but was to show my skill as a back-end dev.
-  The ideia here was to have the best clean code possivel with TDD, scalability and maintecible in mind.
+It’s a RESTfull API to play the “The Resident Zombie”, as a solution for the proposed problem below. This solution may seem over-engineered, but I wanted it to show my skills as a back-end dev. The main idea was to have the cleanest code possible with TDD, scalability and maintainability in mind.
 
 ### Proposal Problem
 
@@ -32,7 +30,7 @@
 
 ## Using
 
- You can use postman, or similar app, to send json to this API.The endpoint and the item's list are below.
+ You can use postman, or a similar app, to send json to this API.The endpoint and the item's list are below.
 
   | Item              | Points    |
   |-------------------|-----------|
