@@ -32,7 +32,7 @@ defmodule Tvirus.Player do
   end
 
   @doc """
-  WIP
+  Returns a map with the 4 types of reports: Infected, Non Infected, Items per survivors, Lost points.
   """
   def reports do
     total_survivor = list_survivors() |> length()
@@ -79,6 +79,58 @@ defmodule Tvirus.Player do
   end
 
   @doc """
+  Returns an easy map for see and manipulate the inventory.
+  """
+  def build_inventory(survivor) do
+    neo_survivor = Repo.preload(survivor, [:inventory])
+
+    %{
+      fiji_water: count_items(neo_survivor.inventory, "Fiji Water"),
+      campbell_soup: count_items(neo_survivor.inventory, "Campbell Soup"),
+      first_aid_pouch: count_items(neo_survivor.inventory, "First Aid Pouch"),
+      ak47: count_items(neo_survivor.inventory, "AK47")
+    }
+  end
+
+  defp count_items(inventory, item_name) do
+    Enum.reduce(inventory, 0, fn item, acc -> if item.name == item_name, do: acc + 1, else: acc end)
+  end
+
+  @doc """
+  Check inventory before trades, if it's a fair trade or not and if both have what they said they have.
+  """
+  def check_inventory(survivor_one, survivor_two, %{trade_one: t_one, trade_two: t_two}) do
+    one = points_per_survivor(survivor_one, t_one)
+    two = points_per_survivor(survivor_two, t_two)
+
+    case one == two do
+      true -> {:ok, :fair}
+      _ -> {:error, :unfair_or_fake_trade}
+    end
+  end
+
+  defp points_per_survivor(%Survivor{} = survivor, trade_map) do
+    inventory = build_inventory(survivor)
+    real? =
+      Enum.map(inventory, fn {k, v} ->
+        trade_map[k] |> String.to_integer <= v
+      end) |> Enum.find(&(&1 == false)) |> is_nil()
+
+    case real? do
+      true ->
+        sum_points(survivor)
+      _ ->
+        false
+    end
+  end
+
+  defp sum_points(%Survivor{} = survivor) do
+    neo_survivor = Repo.preload(survivor, [:inventory])
+
+    Enum.reduce(neo_survivor.inventory, 0, fn item, acc -> item.points + acc end)
+  end
+
+  @doc """
   Returns the list of survivors.
 
   ## Examples
@@ -101,6 +153,20 @@ defmodule Tvirus.Player do
     case Repo.get(Survivor, id) do
       %Survivor{} = survivor -> {:ok, survivor}
       nil -> {:error, :not_found}
+    end
+  end
+
+  @doc """
+  Gets a single survivor if not infected yet.
+
+  Returns `{:error, not_found}` if the Survivor does not exist or returns `{:error, :infected}` if infected already.
+  Or returns `{:ok, %Survivor{}}`.
+  """
+  def get_non_infected(id) do
+    case Repo.get(Survivor, id) do
+      %Survivor{infected: false} = survivor -> {:ok, survivor}
+      %Survivor{infected: true} -> {:error, :infected}
+      _ -> {:error, :not_found}
     end
   end
 

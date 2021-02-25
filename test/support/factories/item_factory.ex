@@ -3,7 +3,7 @@ defmodule Tvirus.ItemFactory do
     quote do
       def item_factory do
         %Tvirus.Resource.Item{
-          name: "#{Faker.Lorem.word()} #{:rand.uniform(100)}",
+          name: "#{Faker.Person.name} #{:rand.uniform(1000)}",
           points: (:rand.uniform(20) + 1)
         }
       end

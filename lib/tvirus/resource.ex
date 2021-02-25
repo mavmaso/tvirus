@@ -19,6 +19,17 @@ defmodule Tvirus.Resource do
     |> length()
   end
 
+
+  def transfer_items(number, item_name, survivor_id, new_survivor_id) when number |> is_integer do
+    item_id = get_item_by_name(item_name)
+    # {:ok, _} = update_inventory(survivor_id, new_survivor_id, item_id)
+
+    acc = number - 1
+    transfer_items(acc, item_name, survivor_id, new_survivor_id)
+  end
+
+  def transfer_items(0, _, _, _), do: {:ok}
+
   @doc """
   Returns the list of items.
 

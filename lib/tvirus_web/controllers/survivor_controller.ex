@@ -45,14 +45,17 @@ defmodule TvirusWeb.SurvivorController do
   end
 
   def trade_items(conn, %{"survivor_id_one" => s1_id, "survivor_id_two" => s2_id} = params) do
-    with {:ok, %Survivor{} = survivor_one} <- Player.get_survivor(s1_id),
-      {:ok, %Survivor{} = survivor_two} <- Player.get_survivor(s2_id) do
+    with {:ok, %Survivor{} = survivor_one} <- Player.get_non_infected(s1_id),
+      {:ok, %Survivor{} = survivor_two} <- Player.get_non_infected(s2_id),
+      {:ok, args} <- clean_trade(params),
+      {:ok, :fair} <- Player.check_inventory(survivor_one, survivor_two,args) do
 
       [survivor_one |> Tvirus.Repo.preload([:inventory]), survivor_two, params]
 
       conn
       |> put_status(:ok)
       |> json(%{data: "WIP"})
+      # |> render("index.json", %{survivors: survivors})
     end
   end
 
@@ -72,4 +75,13 @@ defmodule TvirusWeb.SurvivorController do
   defp str_to_float(str) when is_binary(str), do: String.to_float(str)
 
   defp str_to_float(_str), do: nil
+
+  defp clean_trade(%{"trade_one" => trade_one, "trade_two" => trade_two}) do
+    left_side = Utils.atomify_map(trade_one)
+    right_side = Utils.atomify_map(trade_two)
+
+    {:ok, %{trade_one: left_side, trade_two: right_side}}
+  end
+
+  defp clean_trade(_), do: {:error, :inventory}
 end

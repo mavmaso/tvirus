@@ -197,18 +197,18 @@ defmodule TvirusWeb.SurvivorControllerTest do
 
       params = %{
         survivor_id_one: survivor.id,
-        inventory: %{
+        trade_one: %{
           fiji_water: 5,
           campbell_soup: 0,
           first_aid_pouch: 5,
-          AK47: 0
+          ak47: 0
         },
         survivor_id_two: survivor_two.id,
-        inventory: %{
+        trade_two: %{
           fiji_water: 0,
           campbell_soup: 6,
           first_aid_pouch: 0,
-          AK47: 6
+          ak47: 6
         }
       }
 
