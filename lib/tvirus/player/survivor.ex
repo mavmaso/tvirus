@@ -34,8 +34,6 @@ defmodule Tvirus.Player.Survivor do
     |> unique_constraint(:name)
   end
 
-  defp prepare_inventory(changeset, %{inventory: inventory}) when inventory == [], do: changeset
-
   defp prepare_inventory(changeset, %{inventory: inventory}) do
     list =
       Enum.map(inventory, fn item_name -> Resource.get_item_by_name(item_name) end)

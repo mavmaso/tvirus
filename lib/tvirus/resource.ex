@@ -80,7 +80,7 @@ defmodule Tvirus.Resource do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_item(attrs \\ %{}) do
+  def create_item(attrs) do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
