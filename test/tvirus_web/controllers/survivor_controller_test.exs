@@ -233,18 +233,70 @@ defmodule TvirusWeb.SurvivorControllerTest do
       assert x_survivor_two["inventory"]["campbell_soup"] == 0
     end
 
-    # test "one of the survivors is infected, returns :error", %{conn: conn} do
-    #   survivor = insert(:survivor,%{inventory: [Resource.get_item_by_name("Campbell Soup")]})
-    #   s_two = insert(:survivor, %{infected: true, inventory: [Resource.get_item_by_name("AK47")]})
-    # end
+    test "one of the survivors is infected, returns :error", %{conn: conn} do
+      survivor = insert(:survivor)
+      s_two = insert(:survivor, %{infected: true})
 
-    # test "unfair trade, returns :error", %{conn: conn} do
-    #   survivor = insert(:survivor,%{inventory: [Resource.get_item_by_name("Campbell Soup")]})
-    #   s_two = insert(:survivor, %{infected: true, inventory: [Resource.get_item_by_name("AK47")]})
-    # end
+      params = %{
+        survivor_id_one: survivor.id,
+        trade_one: %{},
+        survivor_id_two: s_two.id,
+        trade_two: %{}
+      }
 
-    # test "can't find one of the survivors", %{conn: conn} do
+      conn = post(conn, Routes.survivor_path(conn, :trade_items, params))
 
-    # end
+      assert %{"detail" => "infected"} = json_response(conn, 400)["errors"]
+    end
+
+    test "unfair trade, returns :error", %{conn: conn} do
+      survivor = insert(:survivor)
+      insert(:inventory, %{
+        survivor_id: survivor.id,
+        item_id: Resource.get_item_by_name("Fiji Water").id
+      })
+
+      survivor_two = insert(:survivor)
+      insert(:inventory, %{
+        survivor_id: survivor_two.id,
+        item_id: Resource.get_item_by_name("Campbell Soup").id
+      })
+
+      params = %{
+        survivor_id_one: survivor.id,
+        trade_one: %{
+          fiji_water: 1,
+          campbell_soup: 0,
+          first_aid_pouch: 0,
+          ak47: 0
+        },
+        survivor_id_two: survivor_two.id,
+        trade_two: %{
+          fiji_water: 0,
+          campbell_soup: 1,
+          first_aid_pouch: 0,
+          ak47: 6
+        }
+      }
+
+      conn = post(conn, Routes.survivor_path(conn, :trade_items, params))
+
+      assert %{"detail" => "unfair_or_fake_trade"} = json_response(conn, 400)["errors"]
+    end
+
+    test "can't find one of the survivors", %{conn: conn} do
+      survivor = insert(:survivor)
+
+      params = %{
+        survivor_id_one: survivor.id,
+        trade_one: %{},
+        survivor_id_two: 0,
+        trade_two: %{}
+      }
+
+      conn = post(conn, Routes.survivor_path(conn, :trade_items, params))
+
+      assert %{"detail" => "Not Found"} = json_response(conn, 404)["errors"]
+    end
   end
 end
