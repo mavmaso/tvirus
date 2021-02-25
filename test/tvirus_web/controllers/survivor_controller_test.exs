@@ -204,19 +204,19 @@ defmodule TvirusWeb.SurvivorControllerTest do
       })
 
       params = %{
-        survivor_id_one: survivor.id,
-        trade_one: %{
-          fiji_water: 5,
-          campbell_soup: 0,
-          first_aid_pouch: 5,
-          ak47: 0
+        "survivor_id_one" => survivor.id,
+        "trade_one" => %{
+          "fiji_water" => 5,
+          "campbell_soup" => 0,
+          "first_aid_pouch" => 5,
+          "ak47" => 0
         },
-        survivor_id_two: survivor_two.id,
-        trade_two: %{
-          fiji_water: 0,
-          campbell_soup: 6,
-          first_aid_pouch: 0,
-          ak47: 6
+        "survivor_id_two" => survivor_two.id,
+        "trade_two" => %{
+          "fiji_water" => 0,
+          "campbell_soup" => 6,
+          "first_aid_pouch" => 0,
+          "ak47" => 6
         }
       }
 
@@ -225,11 +225,11 @@ defmodule TvirusWeb.SurvivorControllerTest do
       assert subject = json_response(conn, 200)["data"]
 
       assert x_survivor_one = Enum.find(subject, &(&1["id"] == survivor.id))
-      assert x_survivor_one["inventory"]["campbell_soup"] == params.trade_two.campbell_soup + 1
+      assert x_survivor_one["inventory"]["campbell_soup"] == params["trade_two"]["campbell_soup"] +1
       assert x_survivor_one["inventory"]["fiji_water"] == 0
 
       assert x_survivor_two = Enum.find(subject, &(&1["id"] == survivor_two.id))
-      assert x_survivor_two["inventory"]["fiji_water"] == params.trade_one.fiji_water + 1
+      assert x_survivor_two["inventory"]["fiji_water"] == params["trade_one"]["fiji_water"] + 1
       assert x_survivor_two["inventory"]["campbell_soup"] == 0
     end
 

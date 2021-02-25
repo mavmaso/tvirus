@@ -44,30 +44,34 @@ It’s a RESTfull API to play the “The Resident Zombie”, as a solution for t
  - Add survivors ( post /api/v1/sign_up )
   ```
   {
-    "name": "John One",
-    "age": 23,
-    "gender": "M",
-    "last_location": {
-      "latitude": "15.23456",
-      "longitude": "-30.67890"
+    "survivor": {
+      "name": "John One",
+      "age": 23,
+      "gender": "M",
+      "last_location": {
+        "latitude": "15.23456",
+        "longitude": "-30.67890"
+      },
+      "inventory": [
+        "Fiji Water",
+        "Campbell Soup",
+        "Campbell Soup",
+        "First Aid Pouch",
+        "AK47",
+        "First Aid Pouch",
+        "Campbell Soup"
+      ]
     }
-    inventory: [
-      "Fiji Water",
-      "Campbell Soup",
-      "Campbell Soup",
-      "First Aid Pouch",
-      "AK47",
-      "First Aid Pouch",
-      "Campbell Soup"
-    ]
   }
   ```
 
  - Update survivor location ( put /api/v1/location/:id )
   ```
   {
-    "latitude": "37.421925",
-    "longitude": "-122.0841293"
+    "last_location": {
+      "latitude": "15.23456",
+      "longitude": "-30.67890",
+    }
   }
   ```
 
@@ -80,22 +84,22 @@ It’s a RESTfull API to play the “The Resident Zombie”, as a solution for t
 
  - Reports ( get api/v1/reports )
 
- - Trade items ( post /api/v1/trade/ )
+ - Trade items ( post /api/v1/trade_items )
   ```
   {
     "survivor_id_one": 1,
-    "inventory": {
+    "trade_one": {
       "fiji_water": 5,
       "campbell_soup": 0,
       "first_aid_pouch": 5,
-      "AK47": 0
+      "ak47": 0
     },
-    "survivor_id_two": 2,
-    "inventory": {
+    "survivor_id_two": 3,
+    "trade_two": {
       "fiji_water": 0,
       "campbell_soup": 6,
       "first_aid_pouch": 0,
-      "AK47": 6
+      "ak47": 6
     }
   }
   ```

@@ -19,7 +19,9 @@ defmodule Tvirus.Resource do
     |> length()
   end
 
-
+  @doc """
+  Transfers the ownership of an item from one survivor for another. If it is possible.
+  """
   def transfer_items(number, item_name, survivor_id, new_survivor_id) when number > 0 do
     {:ok, {:ok, _}} =
       get_inventory_item!(item_name, survivor_id)
@@ -29,7 +31,7 @@ defmodule Tvirus.Resource do
     transfer_items(acc, item_name, survivor_id, new_survivor_id)
   end
 
-  def transfer_items(0, _, _, _), do: {:ok}
+  def transfer_items(0, _, _, _), do: nil
 
   @doc """
   Returns the list of items.
@@ -130,7 +132,7 @@ defmodule Tvirus.Resource do
     |> where([_i, item], item.name == ^item_name)
     |> where([i, _item], i.survivor_id == ^survivor_id)
     |> Repo.all()
-    |> hd
+    |> List.first()
   end
 
   @doc """
@@ -144,4 +146,6 @@ defmodule Tvirus.Resource do
       |> Repo.update()
     end)
   end
+
+  def update_inventory_item(_inventory, _attrs), do: {:ok, {:ok, nil}}
 end

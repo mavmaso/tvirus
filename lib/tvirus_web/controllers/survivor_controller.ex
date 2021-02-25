@@ -87,7 +87,7 @@ defmodule TvirusWeb.SurvivorController do
     left_side = Utils.atomify_map(trade_one)
     right_side = Utils.atomify_map(trade_two)
 
-    {:ok, %{trade_one: left_side, trade_two: right_side}}
+    {:ok, %{trade_one: left_side, trade_two: right_side}} #TODO
   end
 
   defp clean_trade(_), do: {:error, :inventory}

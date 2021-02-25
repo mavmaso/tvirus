@@ -76,7 +76,7 @@ defmodule Tvirus.Player do
     |> where([_inven, _item, survivor], survivor.infected == true)
     |> select([_inven, item, _survivor], item.points)
     |> Repo.all
-    |> Enum.reduce(fn item, acc -> item + acc end)
+    |> Enum.reduce(0, fn item, acc -> item + acc end)
   end
 
   @doc """
@@ -104,18 +104,25 @@ defmodule Tvirus.Player do
     one = points_per_survivor(survivor_one, t_one)
     two = points_per_survivor(survivor_two, t_two)
 
-    case one == two do
-      true -> {:ok, :fair}
-      _ -> {:error, :unfair_or_fake_trade}
+    cond do
+      one == false or two == false -> {:error, :unfair_or_fake_trade}
+      one == two -> {:ok, :fair}
+      true -> {:error, :unfair_or_fake_trade}
     end
+
+    # case one == two do
+    #   true -> {:ok, :fair}
+    #   _ -> {:error, :unfair_or_fake_trade}
+    # end
   end
 
   defp points_per_survivor(%Survivor{} = survivor, trade_map) do
     inventory_map = build_inventory(survivor)
+    map = Utils.fix_trade_map(trade_map)  # due to controller test issue, a little hot fix
     real? =
-      Enum.map(inventory_map, fn {k, v} ->
-        trade_map[k] |> String.to_integer <= v
-      end) |> Enum.find(&(&1 == false)) |> is_nil()
+      Enum.map(inventory_map, fn {k, v} -> map[k] <= v end)
+      |> Enum.find(&(&1 == false))
+      |> is_nil()
 
     case real? do
       true ->
