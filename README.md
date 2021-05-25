@@ -1,10 +1,10 @@
 # Tvirus
  
-It’s a RESTfull API to play the “The Resident Zombie”, as a solution for the proposed problem below. This solution may seem over-engineered, but I wanted it to show my skills as a back-end dev. The main idea was to have the cleanest code possible with TDD, scalability and maintainability in mind.
+It’s a RESTfull API to play a game, as a solution for the proposed problem below. This solution may seem over-engineered, but I wanted it to show my skills as a back-end dev. The main idea was to have the cleanest code possible with TDD, scalability and maintainability in mind.
 
 ### Proposal Problem
 
-  The world, as we know it, has fallen into an apocalyptic scenario. The "Influenzer T-Virus" (a.k.a. Twiter Virus) is transforming human beings into stupid beasts (a.k.a. Zombies), hungry to cancel humans and eat their limbs.
+  The world, as we know it, has fallen into an apocalyptic scenario. The Twiter Virus is transforming human beings into stupid beasts (a.k.a. Zombies), hungry to cancel humans and eat their limbs.
 
   You, the last survivor who knows how to code, will help the resistance by deploying a system to connect the remaining humans. This system will be essential to detect new infections and share resources between the members.
 
