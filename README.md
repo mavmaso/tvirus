@@ -21,6 +21,13 @@ It’s a RESTfull API to play a game, as a solution for the proposed problem bel
 - Start Phoenix endpoint with `mix phx.server`
 - Run complete tests `mix test`
 
+## Docker
+- docker-compose build
+- docker-compose run --rm web mix ecto.setup
+- docker-compose run --rm web mix deps.get
+- docker-compose run --rm web mix test
+- docker-compose up --force-recreate
+
 ## Database
   PostgreSQL
   ```

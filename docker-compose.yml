@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  web:
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      args:
+        MIX_ENV: dev
+    container_name: tvirus
+    command: iex -S mix phx.server
+    # restart: unless-stopped
+    environment:
+      - DBHOST=pg_db
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+    volumes:
+      - .:/app
+    depends_on:
+      - pg_db
+  
+  pg_db:
+    image: postgres:13
+    container_name: tvirus_db
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - PGUSER=postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data: 

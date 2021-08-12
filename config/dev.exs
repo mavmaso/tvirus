@@ -5,7 +5,7 @@ config :tvirus, Tvirus.Repo,
   username: "postgres",
   password: "postgres",
   database: "tvirus_dev",
-  hostname: "localhost",
+  hostname: System.get_env("DBHOST") || "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
