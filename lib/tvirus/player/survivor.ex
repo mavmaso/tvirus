@@ -1,4 +1,6 @@
 defmodule Tvirus.Player.Survivor do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -37,7 +39,7 @@ defmodule Tvirus.Player.Survivor do
   defp prepare_inventory(changeset, %{inventory: inventory}) do
     list =
       Enum.map(inventory, fn item_name -> Resource.get_item_by_name(item_name) end)
-      |> Enum.filter(& !is_nil(&1))
+      |> Enum.filter(&(!is_nil(&1)))
 
     put_assoc(changeset, :inventory, list)
   end

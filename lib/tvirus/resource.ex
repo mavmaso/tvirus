@@ -11,6 +11,7 @@ defmodule Tvirus.Resource do
   @doc """
   Count the total of one kind of item.
   """
+  @spec total_items_by_kind(String.t()) :: integer()
   def total_items_by_kind(kind) do
     Inventory
     |> join(:inner, [i], item in assoc(i, :item))
@@ -22,6 +23,7 @@ defmodule Tvirus.Resource do
   @doc """
   Transfers the ownership of an item from one survivor for another. If it is possible.
   """
+  @spec transfer_items(integer(), String.t(), integer(), integer()) :: :ok
   def transfer_items(number, item_name, survivor_id, new_survivor_id) when number > 0 do
     {:ok, {:ok, _}} =
       get_inventory_item!(item_name, survivor_id)
@@ -31,7 +33,7 @@ defmodule Tvirus.Resource do
     transfer_items(acc, item_name, survivor_id, new_survivor_id)
   end
 
-  def transfer_items(0, _, _, _), do: nil
+  def transfer_items(0, _, _, _), do: :ok
 
   @doc """
   Returns the list of items.
@@ -42,16 +44,15 @@ defmodule Tvirus.Resource do
       [%Item{}, ...]
 
   """
+  @spec list_items :: [Item.t()]
   def list_items do
     Repo.all(Item)
   end
 
   @doc """
   Gets a single item.
-
-  Returns `{:error, not_found}` if the Item does not exist.
-  Or returns `{:ok, %Item{}}`.
   """
+  @spec get_item!(String.t()) :: Item.t() | nil
   def get_item_by_name(name), do: Item |> where([i], i.name == ^name) |> Repo.one()
 
   @doc """
@@ -68,6 +69,7 @@ defmodule Tvirus.Resource do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_item!(integer()) :: Item.t()
   def get_item!(id), do: Repo.get!(Item, id)
 
   @doc """
@@ -82,6 +84,7 @@ defmodule Tvirus.Resource do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_item(map()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def create_item(attrs) do
     %Item{}
     |> Item.changeset(attrs)
@@ -100,6 +103,7 @@ defmodule Tvirus.Resource do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_item(Item.t(), map()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def update_item(%Item{} = item, attrs) do
     item
     |> Item.changeset(attrs)
@@ -118,6 +122,7 @@ defmodule Tvirus.Resource do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_item(Item.t()) :: {:ok, Item.t()} | {:error, Ecto.Changeset.t()}
   def delete_item(%Item{} = item) do
     Repo.delete(item)
   end
@@ -139,6 +144,8 @@ defmodule Tvirus.Resource do
   Updates a item in someone's inventory.
   Returns `{:ok, %Inventory{}}` or if not `{:error, %Ecto.Changeset{}}`
   """
+  @spec update_inventory_item(Inventory.t(), map()) ::
+          {:ok, Inventory.t()} | {:ok, {:ok, nil}} | {:error, Ecto.Changeset.t()}
   def update_inventory_item(%Inventory{} = inventory, attrs) do
     Repo.transaction(fn ->
       inventory

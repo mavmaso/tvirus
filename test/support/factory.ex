@@ -1,4 +1,6 @@
 defmodule Tvirus.Factory do
+  @moduledoc false
+
   use ExMachina.Ecto, repo: Tvirus.Repo
 
   use Tvirus.SurvivorFactory

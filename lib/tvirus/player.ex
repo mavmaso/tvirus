@@ -27,6 +27,7 @@ defmodule Tvirus.Player do
     cond do
       length >= 5 ->
         update_survivor(survivor, %{infected: true})
+
       length < 5 ->
         {:ok, survivor}
     end
@@ -35,6 +36,7 @@ defmodule Tvirus.Player do
   @doc """
   Returns a map with the 4 types of reports: Infected, Non Infected, Items per survivors, Lost points.
   """
+  @spec reports() :: map()
   def reports do
     total_survivor = list_survivors() |> length()
     total_fiji_water = Resource.total_items_by_kind("Fiji Water")
@@ -43,8 +45,8 @@ defmodule Tvirus.Player do
     total_ak47 = Resource.total_items_by_kind("AK47")
 
     %{
-      infected: "#{((count_infected()/total_survivor) |> Float.round(2)) * 100}%",
-      non_infected: "#{((count_non_infected()/total_survivor) |> Float.round(2)) * 100}%",
+      infected: "#{((count_infected() / total_survivor) |> Float.round(2)) * 100}%",
+      non_infected: "#{((count_non_infected() / total_survivor) |> Float.round(2)) * 100}%",
       items_per_survivors: %{
         fiji_water: "#{total_fiji_water}/#{total_survivor}",
         campbell_soup: "#{total_campbell_soup}/#{total_survivor}",
@@ -75,13 +77,14 @@ defmodule Tvirus.Player do
     |> join(:inner, [inven], survivor in assoc(inven, :survivor))
     |> where([_inven, _item, survivor], survivor.infected == true)
     |> select([_inven, item, _survivor], item.points)
-    |> Repo.all
+    |> Repo.all()
     |> Enum.reduce(0, fn item, acc -> item + acc end)
   end
 
   @doc """
   Returns an easy map for see and manipulate the inventory.
   """
+  @spec build_inventory(Survivor.t()) :: map()
   def build_inventory(survivor) do
     neo_survivor = Repo.preload(survivor, [:inventory])
 
@@ -94,12 +97,16 @@ defmodule Tvirus.Player do
   end
 
   defp count_items(inventory, item_name) do
-    Enum.reduce(inventory, 0, fn item, acc -> if item.name == item_name, do: acc + 1, else: acc end)
+    Enum.reduce(inventory, 0, fn item, acc ->
+      if item.name == item_name, do: acc + 1, else: acc
+    end)
   end
 
   @doc """
   Check inventory before trades, if it's a fair trade or not and if both have what they said they have.
   """
+  @spec check_inventory(Survivor.t(), Survivor.t(), map()) ::
+          {:ok, :fair} | {:error, :unfair_or_fake_trade}
   def check_inventory(survivor_one, survivor_two, %{trade_one: t_one, trade_two: t_two}) do
     one = points_per_survivor(survivor_one, t_one)
     two = points_per_survivor(survivor_two, t_two)
@@ -109,34 +116,26 @@ defmodule Tvirus.Player do
       one == two -> {:ok, :fair}
       true -> {:error, :unfair_or_fake_trade}
     end
-
-    # case one == two do
-    #   true -> {:ok, :fair}
-    #   _ -> {:error, :unfair_or_fake_trade}
-    # end
   end
 
   defp points_per_survivor(%Survivor{} = survivor, trade_map) do
+    # due to controller test issue, a little hot fix
+    map = Utils.fix_trade_map(trade_map)
     inventory_map = build_inventory(survivor)
-    map = Utils.fix_trade_map(trade_map)  # due to controller test issue, a little hot fix
+
     real? =
       Enum.map(inventory_map, fn {k, v} -> map[k] <= v end)
       |> Enum.find(&(&1 == false))
       |> is_nil()
 
-    case real? do
-      true ->
-        sum_points(trade_map)
-      _ ->
-        false
-    end
+    if real? == true, do: sum_points(trade_map), else: false
   end
 
   defp sum_points(inventory_map) do
-    Enum.reduce(inventory_map, 0, fn {k,v}, acc->
+    Enum.reduce(inventory_map, 0, fn {k, v}, acc ->
       {key, value} = Utils.build_trade_key_value(k, v)
       item = Resource.get_item_by_name(key)
-      (item.points * value) + acc
+      item.points * value + acc
     end)
   end
 
@@ -149,6 +148,7 @@ defmodule Tvirus.Player do
       [%Survivor{}, ...]
 
   """
+  @spec list_survivors :: [Survivor.t()]
   def list_survivors do
     Repo.all(Survivor)
   end
@@ -159,6 +159,7 @@ defmodule Tvirus.Player do
   Returns `{:error, not_found}` if the Survivor does not exist.
   Or returns `{:ok, %Survivor{}}`.
   """
+  @spec get_survivor!(String.t() | integer()) :: Survivor.t()
   def get_survivor(id) do
     case Repo.get(Survivor, id) do
       %Survivor{} = survivor -> {:ok, survivor}
@@ -172,6 +173,7 @@ defmodule Tvirus.Player do
   Returns `{:error, not_found}` if the Survivor does not exist or returns `{:error, :infected}` if infected already.
   Or returns `{:ok, %Survivor{}}`.
   """
+  @spec get_non_infected(String.t() | integer()) :: Survivor.t()
   def get_non_infected(id) do
     case Repo.get(Survivor, id) do
       %Survivor{infected: false} = survivor -> {:ok, survivor}
@@ -194,6 +196,7 @@ defmodule Tvirus.Player do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_survivor!(String.t() | integer()) :: Survivor.t()
   def get_survivor!(id), do: Repo.get!(Survivor, id)
 
   @doc """
@@ -208,12 +211,16 @@ defmodule Tvirus.Player do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_survivor(map()) :: {:ok, Survivor.t()}
   def create_survivor(attrs) do
-    Repo.transaction(fn ->
-      %Survivor{}
-      |> Survivor.changeset(attrs)
-      |> Repo.insert()
-    end, timeout: :infinity)
+    Repo.transaction(
+      fn ->
+        %Survivor{}
+        |> Survivor.changeset(attrs)
+        |> Repo.insert()
+      end,
+      timeout: :infinity
+    )
     |> check_transaction()
   end
 
@@ -229,12 +236,16 @@ defmodule Tvirus.Player do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_survivor(Survivor.t(), map()) :: {:ok, Survivor.t()}
   def update_survivor(%Survivor{} = survivor, attrs) do
-    Repo.transaction(fn ->
-      survivor
-      |> Survivor.changeset(attrs)
-      |> Repo.update()
-    end, timeout: :infinity)
+    Repo.transaction(
+      fn ->
+        survivor
+        |> Survivor.changeset(attrs)
+        |> Repo.update()
+      end,
+      timeout: :infinity
+    )
     |> check_transaction()
   end
 
@@ -250,10 +261,14 @@ defmodule Tvirus.Player do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_survivor(Survivor.t()) :: {:ok, Survivor.t()}
   def delete_survivor(%Survivor{} = survivor) do
-    Repo.transaction(fn ->
-      Repo.delete(survivor)
-    end, timeout: :infinity)
+    Repo.transaction(
+      fn ->
+        Repo.delete(survivor)
+      end,
+      timeout: :infinity
+    )
     |> check_transaction()
   end
 end

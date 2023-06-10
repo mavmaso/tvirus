@@ -12,6 +12,5 @@ defmodule Tvirus.Repo.Migrations.CreateSurvivors do
 
       timestamps()
     end
-
   end
 end

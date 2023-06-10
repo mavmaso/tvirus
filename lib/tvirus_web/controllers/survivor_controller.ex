@@ -8,7 +8,7 @@ defmodule TvirusWeb.SurvivorController do
 
   def sign_up(conn, %{"survivor" => survivor_params}) do
     with params <- clean_params(survivor_params),
-      {:ok, %Survivor{} = survivor} <- Player.create_survivor(params) do
+         {:ok, %Survivor{} = survivor} <- Player.create_survivor(params) do
       conn
       |> put_status(:created)
       |> render("show.json", %{survivor: survivor})
@@ -17,20 +17,22 @@ defmodule TvirusWeb.SurvivorController do
 
   def location(conn, %{"id" => id} = old_params) do
     with params <- clean_params(Map.delete(old_params, "id")),
-      {:ok, %Survivor{} = survivor} <- Player.get_survivor(id),
-      {:ok, %Survivor{} = neo_survivor} <-
-        Player.update_survivor(survivor, %{latitude: params.latitude, longitude: params.longitude})
-      do
-        conn
-        |> put_status(:ok)
-        |> render("show.json", %{survivor: neo_survivor})
-      end
+         {:ok, %Survivor{} = survivor} <- Player.get_survivor(id),
+         {:ok, %Survivor{} = neo_survivor} <-
+           Player.update_survivor(survivor, %{
+             latitude: params.latitude,
+             longitude: params.longitude
+           }) do
+      conn
+      |> put_status(:ok)
+      |> render("show.json", %{survivor: neo_survivor})
+    end
   end
 
   def flag(conn, %{"id" => id, "flager_id" => flager_id}) do
     with {:ok, %Survivor{} = survivor} <- Player.get_survivor(id),
-      {:ok, %Survivor{}} <- Player.get_survivor(flager_id),
-      {:ok, neo_survivor} <- Player.flag_survivor(survivor, flager_id) do
+         {:ok, %Survivor{}} <- Player.get_survivor(flager_id),
+         {:ok, neo_survivor} <- Player.flag_survivor(survivor, flager_id) do
       conn
       |> put_status(:ok)
       |> render("show.json", %{survivor: neo_survivor})
@@ -40,26 +42,26 @@ defmodule TvirusWeb.SurvivorController do
   def reports(conn, _params) do
     conn
     |> put_status(:ok)
-    |> render("report.json", %{report: Player.reports})
+    |> render("report.json", %{report: Player.reports()})
   end
 
   def trade_items(conn, %{"survivor_id_one" => s1_id, "survivor_id_two" => s2_id} = params) do
     with {:ok, %Survivor{} = survivor_one} <- Player.get_non_infected(s1_id),
-      {:ok, %Survivor{} = survivor_two} <- Player.get_non_infected(s2_id),
-      {:ok, args} <- clean_trade(params),
-      {:ok, :fair} <- Player.check_inventory(survivor_one, survivor_two, args) do
-
-      Enum.each(args.trade_one, fn {k,v} ->
+         {:ok, %Survivor{} = survivor_two} <- Player.get_non_infected(s2_id),
+         {:ok, args} <- clean_trade(params),
+         {:ok, :fair} <- Player.check_inventory(survivor_one, survivor_two, args) do
+      Enum.each(args.trade_one, fn {k, v} ->
         {key, value} = Utils.build_trade_key_value(k, v)
         Resource.transfer_items(value, key, survivor_one.id, survivor_two.id)
       end)
 
-      Enum.each(args.trade_two, fn {k,v} ->
+      Enum.each(args.trade_two, fn {k, v} ->
         {key, value} = Utils.build_trade_key_value(k, v)
         Resource.transfer_items(value, key, survivor_two.id, survivor_one.id)
       end)
 
       survivors = [Player.get_survivor!(survivor_one.id), Player.get_survivor!(survivor_two.id)]
+
       conn
       |> put_status(:ok)
       |> render("index.json", %{survivors: survivors})
@@ -87,7 +89,8 @@ defmodule TvirusWeb.SurvivorController do
     left_side = Utils.atomify_map(trade_one)
     right_side = Utils.atomify_map(trade_two)
 
-    {:ok, %{trade_one: left_side, trade_two: right_side}} #TODO
+    # TODO
+    {:ok, %{trade_one: left_side, trade_two: right_side}}
   end
 
   defp clean_trade(_), do: {:error, :inventory}

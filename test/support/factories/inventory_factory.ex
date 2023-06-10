@@ -1,4 +1,6 @@
 defmodule Tvirus.InventoryFactory do
+  @moduledoc false
+
   defmacro __using__(_opts) do
     quote do
       def inventory_factory do

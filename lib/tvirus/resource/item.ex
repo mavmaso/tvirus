@@ -1,4 +1,6 @@
 defmodule Tvirus.Resource.Item do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 

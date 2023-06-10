@@ -20,7 +20,7 @@ defmodule TvirusWeb.SurvivorControllerTest do
       params = %{
         survivor: %{
           name: Faker.Person.PtBr.name(),
-          age: (:rand.uniform(99) + 1),
+          age: :rand.uniform(99) + 1,
           gender: Enum.random(["M", "F"]),
           last_location: %{
             latitude: "15.12",
@@ -58,17 +58,17 @@ defmodule TvirusWeb.SurvivorControllerTest do
       params = %{
         survivor: %{
           name: Faker.Person.PtBr.name(),
-          age: (:rand.uniform(99) + 1),
+          age: :rand.uniform(99) + 1,
           gender: Enum.random(["M", "F"]),
           last_location: %{
-            latitude: nil,
+            latitude: nil
           }
         }
       }
 
       conn = post(conn, Routes.survivor_path(conn, :sign_up, params))
 
-      assert %{"errors" => %{"latitude" =>  _, "longitude" =>  _}} = json_response(conn, 422)
+      assert %{"errors" => %{"latitude" => _, "longitude" => _}} = json_response(conn, 422)
     end
 
     test "with PostgreSQL error, returns :error", %{conn: conn} do
@@ -85,6 +85,7 @@ defmodule TvirusWeb.SurvivorControllerTest do
   describe "location/2" do
     test "with valid params, returns :ok", %{conn: conn} do
       survivor = insert(:survivor)
+
       params = %{
         last_location: %{
           latitude: "37.421925",
@@ -125,8 +126,8 @@ defmodule TvirusWeb.SurvivorControllerTest do
       survivor = insert(:survivor)
 
       key = String.to_atom("#{survivor.id}")
-      assert {:ok, table} = :dets.open_file(:flag, [type: :set])
-      assert :dets.insert(table, {key, ["ola","oi","yo","hi"]})
+      assert {:ok, table} = :dets.open_file(:flag, type: :set)
+      assert :dets.insert(table, {key, ["ola", "oi", "yo", "hi"]})
 
       params = %{flager_id: insert(:survivor).id}
 
@@ -143,16 +144,22 @@ defmodule TvirusWeb.SurvivorControllerTest do
 
   describe "reports/2" do
     test "percentage of infected survivors, returns :ok", %{conn: conn} do
-      insert(:survivor,%{inventory: [
-        Resource.get_item_by_name("Fiji Water"),
-        Resource.get_item_by_name("First Aid Pouch")
-      ]})
-      insert(:survivor,%{inventory: [
-        Resource.get_item_by_name("Campbell Soup"),
-        Resource.get_item_by_name("AK47"),
-        Resource.get_item_by_name("First Aid Pouch")
-      ]})
-      insert(:survivor,%{inventory: [Resource.get_item_by_name("Campbell Soup")]})
+      insert(:survivor, %{
+        inventory: [
+          Resource.get_item_by_name("Fiji Water"),
+          Resource.get_item_by_name("First Aid Pouch")
+        ]
+      })
+
+      insert(:survivor, %{
+        inventory: [
+          Resource.get_item_by_name("Campbell Soup"),
+          Resource.get_item_by_name("AK47"),
+          Resource.get_item_by_name("First Aid Pouch")
+        ]
+      })
+
+      insert(:survivor, %{inventory: [Resource.get_item_by_name("Campbell Soup")]})
       insert(:survivor, %{infected: true, inventory: [Resource.get_item_by_name("AK47")]})
       insert(:survivor, %{infected: true, inventory: [Resource.get_item_by_name("AK47")]})
 
@@ -176,28 +183,34 @@ defmodule TvirusWeb.SurvivorControllerTest do
   describe "trade_items" do
     test "two survivors trade items with each other in a fair trade, returns :ok", %{conn: conn} do
       survivor = insert(:survivor)
+
       insert_list(5, :inventory, %{
         survivor_id: survivor.id,
         item_id: Resource.get_item_by_name("Fiji Water").id
       })
+
       insert_list(5, :inventory, %{
         survivor_id: survivor.id,
         item_id: Resource.get_item_by_name("First Aid Pouch").id
       })
+
       insert(:inventory, %{
         survivor_id: survivor.id,
         item_id: Resource.get_item_by_name("Campbell Soup").id
       })
 
       survivor_two = insert(:survivor)
+
       insert_list(6, :inventory, %{
         survivor_id: survivor_two.id,
         item_id: Resource.get_item_by_name("Campbell Soup").id
       })
+
       insert_list(6, :inventory, %{
         survivor_id: survivor_two.id,
         item_id: Resource.get_item_by_name("AK47").id
       })
+
       insert(:inventory, %{
         survivor_id: survivor_two.id,
         item_id: Resource.get_item_by_name("Fiji Water").id
@@ -224,13 +237,16 @@ defmodule TvirusWeb.SurvivorControllerTest do
 
       assert subject = json_response(conn, 200)["data"]
 
-      assert x_survivor_one = Enum.find(subject, &(&1["id"] == survivor.id))
-      assert x_survivor_one["inventory"]["campbell_soup"] == params["trade_two"]["campbell_soup"] +1
-      assert x_survivor_one["inventory"]["fiji_water"] == 0
+      assert x_survivor_a = Enum.find(subject, &(&1["id"] == survivor.id))
 
-      assert x_survivor_two = Enum.find(subject, &(&1["id"] == survivor_two.id))
-      assert x_survivor_two["inventory"]["fiji_water"] == params["trade_one"]["fiji_water"] + 1
-      assert x_survivor_two["inventory"]["campbell_soup"] == 0
+      assert x_survivor_a["inventory"]["campbell_soup"] ==
+               params["trade_two"]["campbell_soup"] + 1
+
+      assert x_survivor_a["inventory"]["fiji_water"] == 0
+
+      assert x_survivor_b = Enum.find(subject, &(&1["id"] == survivor_two.id))
+      assert x_survivor_b["inventory"]["fiji_water"] == params["trade_one"]["fiji_water"] + 1
+      assert x_survivor_b["inventory"]["campbell_soup"] == 0
     end
 
     test "one of the survivors is infected, returns :error", %{conn: conn} do
@@ -251,12 +267,14 @@ defmodule TvirusWeb.SurvivorControllerTest do
 
     test "unfair trade, returns :error", %{conn: conn} do
       survivor = insert(:survivor)
+
       insert(:inventory, %{
         survivor_id: survivor.id,
         item_id: Resource.get_item_by_name("Fiji Water").id
       })
 
       survivor_two = insert(:survivor)
+
       insert(:inventory, %{
         survivor_id: survivor_two.id,
         item_id: Resource.get_item_by_name("Campbell Soup").id

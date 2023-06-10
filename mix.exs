@@ -10,7 +10,9 @@ defmodule Tvirus.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [coveralls: :test, "coveralls.html": :test]
     ]
   end
 
@@ -44,8 +46,10 @@ defmodule Tvirus.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:ex_machina, "~> 2.4", only: :test},
-      {:faker, "~> 0.16", only: :test},
-      {:mock, "~> 0.3.0", only: :test}
+      {:faker, "~> 0.17", only: :test},
+      {:mock, "~> 0.3.0", only: :test},
+      {:excoveralls, "~> 0.10", only: :test},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -60,7 +64,7 @@ defmodule Tvirus.MixProject do
       setup: ["deps.get", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.drop","ecto.create --quiet","ecto.migrate --quiet","test"]
+      test: ["ecto.drop", "ecto.create --quiet", "ecto.migrate --quiet", "test --cover"]
     ]
   end
 end

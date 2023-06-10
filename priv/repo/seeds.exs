@@ -10,7 +10,7 @@ Tvirus.Repo.insert!(%Tvirus.Player.Survivor{
   latitude: 15.12,
   longitude: -30.34,
   infected: false,
-  inventory: [fiji,fiji,fiji,fiji,fiji,fiji, aid, aid, aid, aid, aid]
+  inventory: [fiji, fiji, fiji, fiji, fiji, fiji, aid, aid, aid, aid, aid]
 })
 
 Tvirus.Repo.insert!(%Tvirus.Player.Survivor{
@@ -20,5 +20,5 @@ Tvirus.Repo.insert!(%Tvirus.Player.Survivor{
   latitude: 15.12,
   longitude: -30.34,
   infected: false,
-  inventory: [ak,ak,ak,ak,ak,ak,ak,ak, soup,soup,soup,soup,soup,soup]
+  inventory: [ak, ak, ak, ak, ak, ak, ak, ak, soup, soup, soup, soup, soup, soup]
 })
