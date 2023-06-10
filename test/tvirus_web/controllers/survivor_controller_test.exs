@@ -1,8 +1,8 @@
 defmodule TvirusWeb.SurvivorControllerTest do
-  use TvirusWeb.ConnCase
+  use TvirusWeb.ConnCase, async: true
+  use Mimic
 
   import Tvirus.Factory
-  import Mock
 
   alias Tvirus.Resource
 
@@ -72,13 +72,12 @@ defmodule TvirusWeb.SurvivorControllerTest do
     end
 
     test "with PostgreSQL error, returns :error", %{conn: conn} do
-      with_mock Tvirus.Repo, transaction: fn _func, _opt -> {:error, %{}} end do
-        params = %{survivor: %{name: Faker.Person.PtBr.name()}}
+      Tvirus.Repo
+      |> expect(:transaction, fn _func, _opt -> {:error, %{}} end)
 
-        conn = post(conn, Routes.survivor_path(conn, :sign_up, params))
+      conn = post(conn, Routes.survivor_path(conn, :sign_up, %{survivor: %{name: "nome"}}))
 
-        assert %{"errors" => %{"detail" => "transaction_error"}} = json_response(conn, 400)
-      end
+      assert %{"errors" => %{"detail" => "transaction_error"}} = json_response(conn, 400)
     end
   end
 
