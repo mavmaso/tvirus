@@ -23,7 +23,7 @@ defmodule Tvirus.Resource do
   @doc """
   Transfers the ownership of an item from one survivor for another. If it is possible.
   """
-  @spec transfer_items(integer(), String.t(), integer(), integer()) :: :ok
+  @spec transfer_items(integer(), String.t() | atom(), integer(), integer()) :: :ok
   def transfer_items(number, item_name, survivor_id, new_survivor_id) when number > 0 do
     {:ok, {:ok, _}} =
       get_inventory_item!(item_name, survivor_id)

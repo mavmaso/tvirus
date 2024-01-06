@@ -1,0 +1,23 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Tvirus",
+    "dateExported": "2024-01-06T13:20:11.659Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "6018f3b3-e4df-496a-a9c7-55ece68707df",
+            "colId": "0dc8a818-6827-4d6a-8555-b8bbb4be0d95",
+            "containerId": "",
+            "name": "api/v1/reports",
+            "url": "localhost:4000/api/v1/reports",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-01-06T13:19:06.842Z",
+            "modified": "2024-01-06T13:19:06.842Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ]
+}
