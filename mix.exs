@@ -22,7 +22,7 @@ defmodule Tvirus.MixProject do
   def application do
     [
       mod: {Tvirus.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :eex, :wx, :observer, :runtime_tools]
     ]
   end
 
@@ -42,8 +42,8 @@ defmodule Tvirus.MixProject do
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
+      {:gettext, "~> 0.20"},
+      {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.0"},
       {:ex_machina, "~> 2.4", only: :test},
       {:faker, "~> 0.17", only: :test},
@@ -62,6 +62,7 @@ defmodule Tvirus.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup"],
+      resetup: ["deps.get", "ecto.drop", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.drop", "ecto.create --quiet", "ecto.migrate --quiet", "test --cover"]
