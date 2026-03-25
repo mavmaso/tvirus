@@ -20,5 +20,5 @@ defmodule TvirusWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :tvirus
+  use Gettext.Backend, otp_app: :tvirus
 end

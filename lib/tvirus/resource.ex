@@ -6,7 +6,7 @@ defmodule Tvirus.Resource do
   import Ecto.Query, warn: false
   alias Tvirus.Repo
 
-  alias Tvirus.Resource.{Item, Inventory}
+  alias Tvirus.Resource.{Inventory, Item}
 
   @doc """
   Count the total of one kind of item.

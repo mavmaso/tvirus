@@ -14,7 +14,7 @@ config :tvirus,
 config :tvirus, TvirusWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "luuy9MvqwqrBgb7kKiqOotulcmlTKddU/pUsQHophZWP3GGb0tKqjeBkkQuM2SD1",
-  render_errors: [view: TvirusWeb.ErrorView, accepts: ~w(json), layout: false],
+  render_errors: [formats: [json: TvirusWeb.ErrorJSON], layout: false],
   pubsub_server: Tvirus.PubSub,
   live_view: [signing_salt: "8YajREN0"]
 

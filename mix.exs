@@ -5,15 +5,18 @@ defmodule Tvirus.MixProject do
     [
       app: :tvirus,
       version: "0.1.0",
-      elixir: "~> 1.7",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [coveralls: :test, "coveralls.html": :test]
+      test_coverage: [tool: ExCoveralls]
     ]
+  end
+
+  def cli do
+    [preferred_envs: [coveralls: :test, "coveralls.html": :test, precommit: :test]]
   end
 
   # Configuration for the OTP application.
@@ -35,21 +38,23 @@ defmodule Tvirus.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.7"},
-      {:phoenix_ecto, "~> 4.1"},
-      {:ecto_sql, "~> 3.4"},
-      {:postgrex, ">= 0.0.0"},
-      {:phoenix_live_dashboard, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"},
-      {:telemetry_poller, "~> 0.4"},
-      {:gettext, "~> 0.20"},
-      {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.0"},
-      {:ex_machina, "~> 2.4", only: :test},
-      {:faker, "~> 0.17", only: :test},
-      {:excoveralls, "~> 0.10", only: :test},
+      {:phoenix, "~> 1.7"},
+      {:phoenix_ecto, "~> 4.6"},
+      {:ecto_sql, "~> 3.12"},
+      {:postgrex, "~> 0.19"},
+      {:phoenix_live_dashboard, "~> 0.8"},
+      {:telemetry_metrics, "~> 1.0"},
+      {:telemetry_poller, "~> 1.0"},
+      {:gettext, "~> 0.26"},
+      {:jason, "~> 1.4"},
+      {:phoenix_view, "~> 2.0"},
+      {:telemetry, "~> 1.0", override: true},
+      {:plug_cowboy, "~> 2.7"},
+      {:ex_machina, "~> 2.8", only: :test},
+      {:faker, "~> 0.18", only: :test},
+      {:excoveralls, "~> 0.18", only: :test},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:mimic, "~> 1.7", only: :test}
+      {:mimic, "~> 1.10", only: :test}
     ]
   end
 
@@ -65,7 +70,9 @@ defmodule Tvirus.MixProject do
       resetup: ["deps.get", "ecto.drop", "ecto.setup"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.drop", "ecto.create --quiet", "ecto.migrate --quiet", "test --cover"]
+      test: ["ecto.drop", "ecto.create --quiet", "ecto.migrate --quiet", "test --cover"],
+      lint: ["format", "credo --strict"],
+      precommit: ["compile --warnings-as-errors", "deps.unlock --check-unused", "lint", "test"]
     ]
   end
 end

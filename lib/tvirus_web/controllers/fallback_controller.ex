@@ -9,28 +9,28 @@ defmodule TvirusWeb.FallbackController do
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)
-    |> put_view(TvirusWeb.ChangesetView)
-    |> render("error.json", changeset: changeset)
+    |> put_view(json: TvirusWeb.ChangesetJSON)
+    |> render(:error, changeset: changeset)
   end
 
   def call(conn, {:error, :not_found}) do
     conn
     |> put_status(:not_found)
-    |> put_view(TvirusWeb.ErrorView)
+    |> put_view(json: TvirusWeb.ErrorJSON)
     |> render(:"404")
   end
 
   def call(conn, {:error, msg}) when is_atom(msg) do
     conn
     |> put_status(:bad_request)
-    |> put_view(TvirusWeb.ErrorView)
-    |> render("custom_error.json", %{msg: msg})
+    |> put_view(json: TvirusWeb.ErrorJSON)
+    |> render(:custom_error, msg: msg)
   end
 
   def call(conn, {:error, _}) do
     conn
     |> put_status(:bad_request)
-    |> put_view(TvirusWeb.ErrorView)
+    |> put_view(json: TvirusWeb.ErrorJSON)
     |> render(:"400")
   end
 end

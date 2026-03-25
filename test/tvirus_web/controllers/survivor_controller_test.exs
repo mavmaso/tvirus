@@ -4,6 +4,7 @@ defmodule TvirusWeb.SurvivorControllerTest do
 
   import Tvirus.Factory
 
+  alias Faker.Person.PtBr
   alias Tvirus.Resource
 
   setup %{conn: conn} do
@@ -19,7 +20,7 @@ defmodule TvirusWeb.SurvivorControllerTest do
     test "with valid params, returns :ok", %{conn: conn} do
       params = %{
         survivor: %{
-          name: Faker.Person.PtBr.name(),
+          name: PtBr.name(),
           age: :rand.uniform(99) + 1,
           gender: Enum.random(["M", "F"]),
           last_location: %{
@@ -57,7 +58,7 @@ defmodule TvirusWeb.SurvivorControllerTest do
     test "with invalid params, returns :error", %{conn: conn} do
       params = %{
         survivor: %{
-          name: Faker.Person.PtBr.name(),
+          name: PtBr.name(),
           age: :rand.uniform(99) + 1,
           gender: Enum.random(["M", "F"]),
           last_location: %{

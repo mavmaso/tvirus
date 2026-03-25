@@ -11,7 +11,7 @@ defmodule TvirusWeb.SurvivorController do
          {:ok, %Survivor{} = survivor} <- Player.create_survivor(params) do
       conn
       |> put_status(:created)
-      |> render("show.json", %{survivor: survivor})
+      |> render(:show, %{survivor: survivor})
     end
   end
 
@@ -25,7 +25,7 @@ defmodule TvirusWeb.SurvivorController do
            }) do
       conn
       |> put_status(:ok)
-      |> render("show.json", %{survivor: neo_survivor})
+      |> render(:show, %{survivor: neo_survivor})
     end
   end
 
@@ -35,14 +35,14 @@ defmodule TvirusWeb.SurvivorController do
          {:ok, neo_survivor} <- Player.flag_survivor(survivor, flager_id) do
       conn
       |> put_status(:ok)
-      |> render("show.json", %{survivor: neo_survivor})
+      |> render(:show, %{survivor: neo_survivor})
     end
   end
 
   def reports(conn, _params) do
     conn
     |> put_status(:ok)
-    |> render("report.json", %{report: Player.reports()})
+    |> render(:report, %{report: Player.reports()})
   end
 
   def trade_items(conn, %{"survivor_id_one" => s1_id, "survivor_id_two" => s2_id} = params) do
@@ -64,7 +64,7 @@ defmodule TvirusWeb.SurvivorController do
 
       conn
       |> put_status(:ok)
-      |> render("index.json", %{survivors: survivors})
+      |> render(:index, %{survivors: survivors})
     end
   end
 

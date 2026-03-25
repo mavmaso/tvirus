@@ -4,11 +4,10 @@ defmodule Tvirus.Player do
   """
 
   import Ecto.Query, warn: false
-  alias Tvirus.{Repo, DETS, Resource}
+  alias Tvirus.{DETS, Repo, Resource, Utils}
 
   alias Tvirus.Player.Survivor
   alias Tvirus.Resource.Inventory
-  alias Tvirus.{Utils, Resource}
 
   defp check_transaction(transaction) do
     case transaction do
