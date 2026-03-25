@@ -59,15 +59,13 @@ defmodule Tvirus.Player do
   defp count_infected do
     Survivor
     |> where([s], s.infected == true)
-    |> Repo.all()
-    |> length()
+    |> Repo.aggregate(:count)
   end
 
   defp count_non_infected do
     Survivor
     |> where([s], s.infected == false)
-    |> Repo.all()
-    |> length()
+    |> Repo.aggregate(:count)
   end
 
   defp lost_points do

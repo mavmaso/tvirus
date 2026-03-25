@@ -19,8 +19,8 @@ defmodule Tvirus.DETS do
           [flager_id]
 
         value ->
-          list = if value[key] != [flager_id], do: value[key] ++ [flager_id], else: value[key]
-          :dets.insert(table, {key, [flager_id]})
+          list = if flager_id in value[key], do: value[key], else: value[key] ++ [flager_id]
+          :dets.insert(table, {key, list})
           list
       end
 

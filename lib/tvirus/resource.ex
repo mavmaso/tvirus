@@ -16,8 +16,7 @@ defmodule Tvirus.Resource do
     Inventory
     |> join(:inner, [i], item in assoc(i, :item))
     |> where([_i, item], item.name == ^kind)
-    |> Repo.all()
-    |> length()
+    |> Repo.aggregate(:count)
   end
 
   @doc """

@@ -122,21 +122,30 @@ defmodule TvirusWeb.SurvivorControllerTest do
       assert subject["infected"] == false
     end
 
-    test "with valid params and already flag 4, returns :ok", %{conn: conn} do
+    test "with valid params and already flag 3, flag 2 more times and becomes infected", %{
+      conn: conn
+    } do
       survivor = insert(:survivor)
 
       key = String.to_atom("#{survivor.id}")
       assert {:ok, table} = :dets.open_file(:flag, type: :set)
-      assert :dets.insert(table, {key, ["ola", "oi", "yo", "hi"]})
+      assert :dets.insert(table, {key, ["ola", "oi", "yo"]})
+      :dets.close(table)
 
-      params = %{flager_id: insert(:survivor).id}
+      flager_4 = insert(:survivor)
+      flager_5 = insert(:survivor)
 
-      conn = put(conn, Routes.survivor_path(conn, :flag, survivor.id, params))
+      conn1 = put(conn, Routes.survivor_path(conn, :flag, survivor.id, %{flager_id: flager_4.id}))
+      assert subject = json_response(conn1, 200)["data"]
+      assert subject["id"] == survivor.id
+      assert subject["infected"] == false
 
-      assert subject = json_response(conn, 200)["data"]
+      conn2 = put(conn, Routes.survivor_path(conn, :flag, survivor.id, %{flager_id: flager_5.id}))
+      assert subject = json_response(conn2, 200)["data"]
       assert subject["id"] == survivor.id
       assert subject["infected"] == true
 
+      assert {:ok, table} = :dets.open_file(:flag, type: :set)
       assert :dets.delete(table, key)
       assert :dets.close(table)
     end
